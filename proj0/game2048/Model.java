@@ -5,7 +5,7 @@ import java.util.Observable;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author: Zicheng Liang
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -138,6 +138,13 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        for (int i = 0; i < b.size(); i++) {
+            for (int j = 0; j < b.size(); j++) {
+                if (b.tile(i, j) == null){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -148,6 +155,13 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        for (int i = 0; i < b.size(); i++) {
+            for (int j = 0; j < b.size(); j++) {
+                if ( b.tile(i, j) != null && b.tile(i, j).value() == MAX_PIECE) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -159,7 +173,37 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        if (emptySpaceExists(b)) {
+            return true;
+        } else if (adjacentMoveAvailable(b)) {
+            return true;
+        }
         return false;
+    }
+
+    /**
+     * A helper method to check if adjacent moves are available
+     * i.e., if any two adjacent tiles with the same value.
+     * @param b
+     * @return true if adjacent move is available
+     */
+    private static boolean adjacentMoveAvailable(Board b) {
+        for (int i = 0; i < b.size(); i++) {
+            for (int j = 0; j < b.size(); j++) {
+                int thisValue = b.tile(i, j).value();
+
+                if (i + 1 < b.size()) {
+                    int rightValue = b.tile(i + 1, j).value();
+                    if (thisValue == rightValue) return true;
+                }
+
+                if (j + 1 < b.size()) {
+                    int downValue = b.tile(i, j + 1).value();
+                    if (thisValue == downValue) return true;
+                }
+            }
+        }
+        return  false;
     }
 
 
