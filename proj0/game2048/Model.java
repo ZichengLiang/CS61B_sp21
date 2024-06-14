@@ -110,15 +110,92 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-        // TODO: Modify this.board (and perhaps this.score) to account
-        // for the tilt to the Side SIDE. If the board changed, set the
-        // changed local variable to true.
+        /* TODO: Modify this.board (and perhaps this.score) to account
+         * for the tilt to the Side SIDE. If the board changed, set the
+         * changed local variable to true.
+         */
+        board.setViewingPerspective(side);
+        moveAll(this.board);
+        // test1.move(test1.col(), test1.row() + getUpLimit(test1));
+        board.setViewingPerspective(Side.NORTH);
 
+        changed = true;
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
+    }
+
+    private void addScore(Tile t) {
+        if (t.next() != null && t.next().value() != t.value()) {
+            score += t.next().value();
+        }
+    }
+    private void moveAll(Board b) {
+        for (int c = 0; c < b.size(); c++) {
+            for (int r = b.size() - 1; r >= 0; r--) {
+                if (b.tile(c, r) != null) {
+                    Tile tile = b.tile(c, r);
+                    System.out.println("Before moving this tile: " + tile.toString() + board.toString());
+                    moveThis(tile);
+                    System.out.println("After moving this tile: " + tile.toString() + board.toString());
+                }
+            }
+        }
+    }
+
+    private void moveThis(Tile t) {
+        board.move(t.col(), t.row() + getUpLimit(t), t);
+        addScore(t);
+    }
+
+    private int getUpLimit(Tile t) {
+       int limit = 0;
+       Tile testTile = Tile.create(t.value(), t.col(), t.row());
+       while(moveUpAvailable(testTile)) {
+           limit += 1;
+           testTile = Tile.create(testTile.value(), testTile.col(), testTile.row() + 1);
+       }
+       return limit;
+    }
+
+    private boolean moveUpAvailable(Tile t) {
+        if (t.row() + 1 < board.size()) {
+            Tile upTile = board.tile(t.col(), t.row() + 1);
+            return (upTile == null || mergeAvailable(t, upTile));
+        }
+        return false;
+    }
+
+    private boolean mergeAvailable(Tile t1, Tile t2) {
+        return (t1.value() == t2.value());
+    }
+
+    private static void mergeTiles(int[] tileVals) {
+       int p = 0;
+       while (p < tileVals.length - 1) {
+           if (tileVals[p] == tileVals[p+1]) {
+               tileVals[p] = 2 * tileVals[p];
+               tileVals[p+1] = 0;
+           }
+           p++;
+       }
+    }
+
+    private static void slideTiles(int[] tileVals) {
+        int p = 0;
+        while (p < tileVals.length - 1) {
+            if (tileVals[p] == 0) {
+                for (int i = p + 1; i < tileVals.length; i++) {
+                    if (tileVals[i] != 0) {
+                        tileVals[p] = tileVals[i];
+                        tileVals[i] = 0;
+                    }
+                }
+            }
+            p++;
+        }
     }
 
     /** Checks if the game is over and sets the gameOver variable
@@ -188,18 +265,26 @@ public class Model extends Observable {
      * @return true if adjacent move is available
      */
     private static boolean adjacentMoveAvailable(Board b) {
-        for (int i = 0; i < b.size(); i++) {
-            for (int j = 0; j < b.size(); j++) {
-                int thisValue = b.tile(i, j).value();
+        /*
+            (3, 0) | (3, 1) | (3, 2) | (3, 3)
+            (2, 0) | (2, 1) | (2, 2) | (2, 3)
+            (1, 0) | (1, 1) | (1, 2) | (1, 3)
+            (0, 0) | (0, 1) | (0, 2) | (0, 3)
 
-                if (i + 1 < b.size()) {
-                    int rightValue = b.tile(i + 1, j).value();
+            (j, i)
+         */
+        for (int c = 0; c < b.size(); c++) {
+            for (int r = 0; r < b.size(); r++) {
+                int thisValue = b.tile(c, r).value();
+
+                if (c + 1 < b.size()) {
+                    int rightValue = b.tile(c + 1, r).value();
                     if (thisValue == rightValue) return true;
                 }
 
-                if (j + 1 < b.size()) {
-                    int downValue = b.tile(i, j + 1).value();
-                    if (thisValue == downValue) return true;
+                if (r + 1 < b.size()) {
+                    int upValue = b.tile(c, r + 1).value();
+                    if (thisValue == upValue) return true;
                 }
             }
         }
