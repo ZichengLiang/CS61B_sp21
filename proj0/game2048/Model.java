@@ -115,10 +115,10 @@ public class Model extends Observable {
          * changed local variable to true.
          */
         board.setViewingPerspective(side);
-        moveAll(this.board);
-        // test1.move(test1.col(), test1.row() + getUpLimit(test1));
-        board.setViewingPerspective(Side.NORTH);
 
+        moveAll(this.board);
+
+        board.setViewingPerspective(Side.NORTH);
         changed = true;
         checkGameOver();
         if (changed) {
@@ -138,21 +138,21 @@ public class Model extends Observable {
                 if (b.tile(c, r) != null) {
                     Tile tile = b.tile(c, r);
                     System.out.println("Before moving this tile: " + tile.toString() + board.toString());
-                    moveThis(tile);
+                    moveThis(tile, c, r);
                     System.out.println("After moving this tile: " + tile.toString() + board.toString());
                 }
             }
         }
     }
 
-    private void moveThis(Tile t) {
-        board.move(t.col(), t.row() + getUpLimit(t), t);
+    private void moveThis(Tile t, int col, int row) {
+        board.move(col, row + getUpLimit(t, col, row), t);
         addScore(t);
     }
 
-    private int getUpLimit(Tile t) {
+    private int getUpLimit(Tile t, int col, int row) {
        int limit = 0;
-       Tile testTile = Tile.create(t.value(), t.col(), t.row());
+       Tile testTile = Tile.create(t.value(), col, row);
        while(moveUpAvailable(testTile)) {
            limit += 1;
            testTile = Tile.create(testTile.value(), testTile.col(), testTile.row() + 1);
