@@ -2,7 +2,7 @@
   My implementations for UC Berkeley‘s CS61B: Data Structure and Algorithms (2021 Spring)
 ----
  - The course was taught in Java, focusing on both DS&A knowledge and enginneering skills to build and maintain moderately large programs.
- - The coding coursework include 4 projects and 8 labs:
+ - The coding coursework includes 4 projects and 8 labs:
   ----
   - Each project has a specific theme:
     - [x] Project 0 (2048): Introduction to Java
