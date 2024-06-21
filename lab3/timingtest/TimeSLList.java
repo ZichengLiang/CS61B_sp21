@@ -1,5 +1,8 @@
 package timingtest;
+import java.util.Random;
+
 import edu.princeton.cs.algs4.Stopwatch;
+import org.apache.commons.math3.random.RandomGenerator;
 
 /**
  * Created by hug.
@@ -18,11 +21,38 @@ public class TimeSLList {
     }
 
     public static void main(String[] args) {
-        timeGetLast();
+        AList<Integer> Ns = new AList<>();
+        AList<Double> times = new AList<>();
+        AList<Integer> opCounts = new AList<>();
+        timeGetLast(Ns, times, opCounts);
+        printTimingTable(Ns, times, opCounts);
     }
 
-    public static void timeGetLast() {
+    public static void timeGetLast(AList<Integer> Ns, AList<Double> times, AList<Integer> opCounts) {
         // TODO: YOUR CODE HERE
-    }
+        int n = 1000;
+        int ops = 10000;
+
+        SLList<Integer> test;
+        // Add N items to the SLList
+        // start the timer
+            while (n <= 128000) {
+                test = new SLList<>();
+                for (int j = 0; j < n; j++) {
+                    test.addLast(1);
+                }
+
+                Stopwatch sw = new Stopwatch();
+                for (int j = 0; j < ops; j++) {
+                    test.getLast();
+                }
+                double time = sw.elapsedTime();
+
+                Ns.addLast(n);
+                times.addLast(time);
+                opCounts.addLast(ops);
+                n *= 2;
+            }
+        }
 
 }

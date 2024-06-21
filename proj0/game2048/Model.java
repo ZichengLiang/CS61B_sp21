@@ -118,8 +118,9 @@ public class Model extends Observable {
 
         moveAll(this.board);
 
-        board.setViewingPerspective(Side.NORTH);
         changed = true;
+
+        board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
@@ -134,7 +135,7 @@ public class Model extends Observable {
     }
     private void moveAll(Board b) {
         for (int c = 0; c < b.size(); c++) {
-            for (int r = b.size() - 1; r >= 0; r--) {
+            for (int r = b.size() - 2; r >= 0; r--) {
                 if (b.tile(c, r) != null) {
                     Tile tile = b.tile(c, r);
                     System.out.println("Before moving this tile: " + tile.toString() + board.toString());
