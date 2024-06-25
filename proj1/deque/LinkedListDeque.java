@@ -2,9 +2,9 @@ package deque;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> implements Deque<T>, Iterable {
-    Node sentinel;
-    int size = 0;
+public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
+    private final Node sentinel;
+    private int size = 0;
     public LinkedListDeque() {
         sentinel = new Node(null, null, null);
         sentinel.setPrev(sentinel);
@@ -12,13 +12,13 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable {
     }
 
     @Override
-    public Iterator iterator() {
+    public Iterator<T> iterator() {
         return new LLDIterator();
     }
 
-    private class LLDIterator implements Iterator <T> {
+    private class LLDIterator implements Iterator<T> {
         private Node curr;
-        public LLDIterator() {
+        LLDIterator() {
             curr = sentinel.next;
         }
         @Override
@@ -38,7 +38,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable {
         T value;
         Node prev, next;
 
-        public Node(T value, Node prev, Node next) {
+        Node(T value, Node prev, Node next) {
             this.value = value;
             this.prev = prev;
             this.next = next;
@@ -93,11 +93,11 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable {
     @Override
     public void printDeque() {
         Node curr = sentinel.next;
-        while(curr.getValue() != null) {
+        while (curr.getValue() != null) {
             System.out.print(curr.getValue() + " ");
             curr = curr.getNext();
         }
-        System.out.printf("\n");
+        System.out.println();
     }
 
     @Override
@@ -156,5 +156,21 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable {
             return next.getValue();
         }
         return getRecursiveHelper(next.getNext(), index - 1);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Deque otherDeque) {
+            if (this.size != otherDeque.size()) {
+                return false;
+            }
+            for (int i = 0; i < size; i++) {
+                if (!this.get(i).equals(otherDeque.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

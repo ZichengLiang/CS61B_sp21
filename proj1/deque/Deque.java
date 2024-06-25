@@ -3,35 +3,36 @@ package deque;
 public interface Deque<T> {
 
     /** Adds an item of type T to the front of the deque. You can assume that item is never null */
-    public void addFirst(T item);
+    void addFirst(T item);
 
     /** Adds an item of type T to the back of the deque. You can assume that item is never null */
-    public void addLast(T item);
+    void addLast(T item);
 
     /** Returns true if deque is empty, false otherwise */
-    public boolean isEmpty();
+    boolean isEmpty();
 
     /** Returns the number of items in the deque. */
-    public int size();
+    int size();
 
     /** Prints the items in the deque from first to last, seperated by a space.
      * Once all the items have been printed, print out a new line. */
-    public void printDeque();
+    void printDeque();
 
     /** Removes and returns the item at the front of the deque.
      *  If no such item exists, returns null. */
-    public T removeFirst();
+    T removeFirst();
 
     /** Removes and returns the item at the back of the deque.
      *  If no such item exists, returns null. */
-    public T removeLast();
+    T removeLast();
 
     /** Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth.
      *  If no such item exists, returns null.
      *  Must NOT alter the deque! */
-    public T get(int index);
+    T get(int index);
 
     /** Returns whether or not the parameter o is equal to the Deque.
-     *  o is considered equal if it is a Deque and if it contains the same contents in the same order.
+     *  o is considered equal if it is a Deque
+     *  && if it contains the same contents in the same order.
      *  (You'll have to use the instanceof keyword for this. */
 }
