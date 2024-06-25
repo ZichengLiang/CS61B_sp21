@@ -12,7 +12,7 @@ public class GuitarHero {
         fillNotes();
     }
     static GuitarString[] notes = new GuitarString[37];
-    static double getFrequency (double i) {
+    static double getFrequency(double i) {
         return CONCERT_A * Math.pow(2, i / 12.0);
     }
 
@@ -25,7 +25,9 @@ public class GuitarHero {
     static boolean keyboardContains(char key) {
         char[] keys = KEYBOARD.toCharArray();
         for (int i = 0; i < keys.length; i++) {
-            if (key == keys[i]) { return true; }
+            if (key == keys[i]) {
+                return true;
+            }
         }
         return false;
     }
@@ -46,7 +48,9 @@ public class GuitarHero {
             if (StdDraw.hasNextKeyTyped()) {
                 char key = StdDraw.nextKeyTyped();
                 theString = getString(key);
-                if (theString != null) { theString.pluck(); }
+                if (theString != null) {
+                    theString.pluck();
+                }
             }
 
             /* compute the superposition of samples */

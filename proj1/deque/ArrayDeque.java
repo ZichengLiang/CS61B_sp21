@@ -115,20 +115,15 @@ public class ArrayDeque<T> implements Deque <T>, Iterable<T> {
     }
 
     public boolean equals(Object o) {
-        if (o instanceof Deque otherDeque) {
-            if (this.size() != otherDeque.size()){
+        ArrayDeque<T> otherDeque = (ArrayDeque<T>) o;
+        if (this.size() != otherDeque.size()){
+            return false;
+        }
+        for (int i = 0; i < this.size; i++) {
+            if (!this.get(i).equals(otherDeque.get(i))) {
                 return false;
             }
-            for (int i = 0; i < this.size; i++) {
-                if (!this.get(i).equals(otherDeque.get(i))) {
-                    return false;
-                    // can I use enhanced for loop to improve this?
-                    // the problem is I don't have a .contains() method.
-                    // but the current implementation may be even more efficient than EFLoop
-                }
-            }
-            return true;
         }
-        return false;
+        return true;
     }
 }
