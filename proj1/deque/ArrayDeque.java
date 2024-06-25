@@ -1,9 +1,11 @@
 package deque;
 
-public class ArrayDeque <T> implements Deque <T> {
+import java.util.Iterator;
+
+public class ArrayDeque <T> implements Deque <T>, Iterable <T> {
     final int INIT_SIZE = 32;
-    private Object[] items;
-    private int size;
+    protected Object[] items;
+    protected int size;
     // example array:
     // [a, b, c, d, e, f, g]
     //  0  1  2  3  4  5  6
@@ -11,6 +13,29 @@ public class ArrayDeque <T> implements Deque <T> {
     public ArrayDeque() {
         items = new Object[INIT_SIZE];
         size = 0; //"size" is actually used as a pointer to the deque position.
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new ADIterator();
+    }
+
+    private class ADIterator implements Iterator<T> {
+        private int curr;
+        public ADIterator () {
+           curr = 0;
+        }
+        @Override
+        public boolean hasNext() {
+            return curr < size;
+        }
+
+        @Override
+        public T next() {
+            T thisObj = (T) items[curr];
+            curr += 1;
+            return thisObj;
+        }
     }
 
     @Override
@@ -89,9 +114,21 @@ public class ArrayDeque <T> implements Deque <T> {
         return (T) items[index];
     }
 
-    @Override
     public boolean equals(Object o) {
+        if (o instanceof ArrayDeque otherDeque) {
+            if (this.size() != otherDeque.size()){
+                return false;
+            }
+            for (int i = 0; i < this.size; i++) {
+                if (!this.get(i).equals(otherDeque.get(i))) {
+                    return false;
+                    // can I use enhanced for loop to improve this?
+                    // the problem is I don't have a .contains() method.
+                    // but the current implementation may be even more efficient than EFLoop
+                }
+            }
+            return true;
+        }
         return false;
     }
-
 }

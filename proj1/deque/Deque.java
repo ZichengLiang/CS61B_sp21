@@ -34,5 +34,4 @@ public interface Deque<T> {
     /** Returns whether or not the parameter o is equal to the Deque.
      *  o is considered equal if it is a Deque and if it contains the same contents in the same order.
      *  (You'll have to use the instanceof keyword for this. */
-    public boolean equals(Object o);
 }
