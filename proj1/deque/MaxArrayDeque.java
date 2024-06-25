@@ -20,11 +20,11 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
     /** Returns the maximum element in the deque as governed by the parameter Comparator c.
      *  If the MaxArrayDeque is empty, simply return null.
      */
-    public T max(Comparator<T> c) {
+    public T max(Comparator<T> comp) {
         if (!this.isEmpty()) {
             T max = null;
             for (T i : this) {
-                if (c.compare(max, i) < 0) {
+                if (comp.compare(max, i) < 0) {
                     max = i;
                 }
             }

@@ -2,10 +2,10 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> implements Deque <T>, Iterable<T> {
-    final int INIT_SIZE = 32;
-    protected Object[] items;
-    protected int size;
+public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
+    private final int INIT_SIZE = 32;
+    private Object[] items;
+    private int size;
     // example array:
     // [a, b, c, d, e, f, g]
     //  0  1  2  3  4  5  6
@@ -22,8 +22,8 @@ public class ArrayDeque<T> implements Deque <T>, Iterable<T> {
 
     private class ADIterator implements Iterator<T> {
         private int curr;
-        public ADIterator () {
-           curr = 0;
+        ADIterator() {
+            curr = 0;
         }
         @Override
         public boolean hasNext() {
@@ -39,7 +39,7 @@ public class ArrayDeque<T> implements Deque <T>, Iterable<T> {
     }
 
     @Override
-    public void addFirst(Object item) {
+    public void addFirst(T item) {
         if (size == items.length) {
             resize(size * 2);
         }
@@ -53,7 +53,7 @@ public class ArrayDeque<T> implements Deque <T>, Iterable<T> {
     }
 
     @Override
-    public void addLast(Object item) {
+    public void addLast(T item) {
         if (size == items.length) {
             resize(size * 2);
         }
@@ -115,8 +115,16 @@ public class ArrayDeque<T> implements Deque <T>, Iterable<T> {
     }
 
     public boolean equals(Object o) {
-        ArrayDeque<T> otherDeque = (ArrayDeque<T>) o;
-        if (this.size() != otherDeque.size()){
+        if (o == null) {
+            return false;
+        }
+
+        if (o.getClass() != Deque.class) {
+            return false;
+        }
+
+        ArrayDeque otherDeque = (ArrayDeque) o;
+        if (this.size() != otherDeque.size()) {
             return false;
         }
         for (int i = 0; i < this.size; i++) {
