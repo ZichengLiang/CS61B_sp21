@@ -9,7 +9,9 @@ public interface Deque<T> {
     void addLast(T item);
 
     /** Returns true if deque is empty, false otherwise */
-    boolean isEmpty();
+    default boolean isEmpty() {
+        return this.size() == 0;
+    }
 
     /** Returns the number of items in the deque. */
     int size();
@@ -30,9 +32,4 @@ public interface Deque<T> {
      *  If no such item exists, returns null.
      *  Must NOT alter the deque! */
     T get(int index);
-
-    /** Returns whether or not the parameter o is equal to the Deque.
-     *  o is considered equal if it is a Deque
-     *  && if it contains the same contents in the same order.
-     *  (You'll have to use the instanceof keyword for this. */
 }

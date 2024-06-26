@@ -19,13 +19,10 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     private class LLDIterator implements Iterator<T> {
         private Node curr;
         LLDIterator() {
-            curr = sentinel.next;
+            curr = sentinel;
         }
         @Override
         public boolean hasNext() {
-            if (curr.getNext().equals(sentinel)) {
-                return curr != sentinel.getNext();
-            }
             return !curr.getNext().equals(sentinel);
         }
 
@@ -81,11 +78,6 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         sentinel.prev.setNext(last);
         sentinel.setPrev(last);
         size += 1;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
     }
 
     @Override
@@ -178,6 +170,6 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
             }
             return true;
         }
-       return false;
+        return false;
     }
 }
