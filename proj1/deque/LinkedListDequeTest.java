@@ -12,7 +12,6 @@ public class LinkedListDequeTest {
     @Test
     /** Adds a few things to the list, checking isEmpty() and size() are correct,
      * finally printing the results.
-     *
      * && is the "and" operation. */
     public void addIsEmptySizeTest() {
         LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
@@ -133,5 +132,35 @@ public class LinkedListDequeTest {
         for (double i = 999999; i > 500000; i--) {
             assertEquals("Should have the same value", i, (double) lld1.removeLast(), 0.0);
         }
+    }
+
+    @Test
+    public void equalsNull() {
+        LinkedListDeque<String> lld1 = new LinkedListDeque<>();
+        assertFalse(lld1.equals(null));
+    }
+
+    @Test
+    public void equalsDeque() {
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+        LinkedListDeque<Integer> lld2 = new LinkedListDeque<>();
+        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+
+        for (int i = 0; i < 10; i++) {
+            lld1.addLast(i);
+            lld2.addLast(i);
+            ad1.addLast(i);
+        }
+
+        assertTrue(lld1.equals(lld2));
+        assertTrue(lld1.equals(ad1));
+    }
+
+    @Test
+    public void notEuqals() {
+        String test = "ad";
+        LinkedListDeque<String> lld1 = new LinkedListDeque<>();
+        lld1.addLast("ad");
+        assertFalse(lld1.equals(test));
     }
 }

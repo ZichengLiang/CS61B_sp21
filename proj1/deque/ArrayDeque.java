@@ -63,7 +63,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
     private void resize(int capacity) {
         Object[] newItems = new Object[capacity];
-        System.arraycopy(items, 0, newItems, 0, items.length);
+        System.arraycopy(items, 0, newItems, 0, size);
         items = newItems;
     }
 
@@ -90,6 +90,10 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         if (size <= 0) {
             return null;
         }
+        if (size < items.length / 2) {
+            resize(items.length / 2);
+        }
+
         T removed = (T) items[0];
         System.arraycopy(items, 1, items, 0, size - 1);
         size -= 1;
@@ -101,6 +105,10 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         if (size <= 0) {
             return null;
         }
+        if (size < items.length / 2) {
+            resize(items.length / 2);
+        }
+
         T removed = (T) items[size - 1];
         size -= 1;
         return removed;
@@ -119,19 +127,18 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             return false;
         }
 
-        if (o.getClass() != Deque.class) {
-            return false;
-        }
-
-        ArrayDeque otherDeque = (ArrayDeque) o;
-        if (this.size() != otherDeque.size()) {
-            return false;
-        }
-        for (int i = 0; i < this.size; i++) {
-            if (!this.get(i).equals(otherDeque.get(i))) {
+        if (o.getClass() == ArrayDeque.class || o.getClass() == LinkedListDeque.class) {
+            Deque otherDeque = (Deque) o;
+            if (this.size != otherDeque.size()) {
                 return false;
             }
+            for (int i = 0; i < size; i++) {
+                if (!this.get(i).equals(otherDeque.get(i))) {
+                    return false;
+                }
+            }
+            return true;
         }
-        return true;
+       return false;
     }
 }

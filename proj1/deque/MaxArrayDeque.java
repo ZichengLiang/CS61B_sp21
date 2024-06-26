@@ -21,8 +21,8 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
      *  If the MaxArrayDeque is empty, simply return null.
      */
     public T max(Comparator<T> comp) {
-        if (!this.isEmpty()) {
-            T max = null;
+        if (!this.isEmpty() && comp != null) {
+            T max = this.get(0);
             for (T i : this) {
                 if (comp.compare(max, i) < 0) {
                     max = i;
