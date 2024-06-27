@@ -23,7 +23,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         }
         @Override
         public boolean hasNext() {
-            return !curr.getNext().equals(sentinel);
+            return !(curr.getNext().getValue() == null);
         }
 
         @Override
