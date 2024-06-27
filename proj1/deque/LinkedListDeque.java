@@ -19,7 +19,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     private class LLDIterator implements Iterator<T> {
         private Node curr;
         LLDIterator() {
-            curr = sentinel;
+            curr = sentinel.next;
         }
         @Override
         public boolean hasNext() {
