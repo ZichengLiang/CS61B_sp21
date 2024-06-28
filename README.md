@@ -6,7 +6,7 @@
   ----
   - Each project has a specific theme:
     - [x] Project 0 (2048): Introduction to Java
-    - [ ] Project 1 (Deques & Guitar Hero): Basic Design, Testing, and Code Review
+    - [x] Project 1 (Deques & Guitar Hero): Basic Design, Testing, and Code Review
     - [ ] Project 2 (GitLet): Design, Large Scale Implementation
     - [ ] Project 3 (Build Your Own World): Large Scale Design
   ----
@@ -14,7 +14,7 @@
      - [x] lab 1: Introduction to Java
      - [x] lab 2: Debugging with IDEA's debugger
      - [x] lab 3: Timing and Randomized Testing
-     - [ ] lab 4: Debugging and Git exercises
+     - [x] lab 4: Debugging and Git exercises
      - [ ] lab 6: Getting started on Project2
      - [ ] lab 7: BST Map
      - [ ] lab 8: Hash Map
