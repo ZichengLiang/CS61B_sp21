@@ -26,5 +26,6 @@ public class ArrayDequeTest {
 
         System.out.printf("Printing out deque: \n");
         ad1.printDeque();
+        System.out.printf("😄");
     }
 }
