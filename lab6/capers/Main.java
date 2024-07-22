@@ -1,7 +1,9 @@
 package capers;
 
 import java.io.File;
+import java.util.Arrays;
 
+import static capers.CapersRepository.story;
 import static capers.Utils.*;
 
 /** Canine Capers: A Gitlet Prelude.
@@ -40,23 +42,36 @@ public class Main {
         if (args.length == 0) {
             Utils.exitWithError("Must have at least one argument");
         }
+        System.out.println("args: " + Arrays.toString(args));
 
         CapersRepository.setupPersistence();
         String text;
+        String name, breed;
+        int age;
+
         switch (args[0]) {
         case "story":
             /* This call has been handled for you. The rest will be similar. */
             validateNumArgs("story", args, 2);
             text = args[1];
             CapersRepository.writeStory(text);
+            System.out.println(Utils.readContentsAsString(story));
             break;
         case "dog":
             validateNumArgs("dog", args, 4);
-            // TODO: make a dog
+            name = args[1];
+            breed = args[2];
+            try {
+                age = Integer.valueOf(args[3]);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid Integer input!");
+                break;
+            }
+            CapersRepository.makeDog(name, breed, age);
             break;
         case "birthday":
             validateNumArgs("birthday", args, 2);
-            // TODO: celebrate this dog's birthday
+            CapersRepository.celebrateBirthday(args[2]);
             break;
         default:
             exitWithError(String.format("Unknown command: %s", args[0]));
