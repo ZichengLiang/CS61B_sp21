@@ -15,8 +15,8 @@
      - [x] lab 2: Debugging with IDEA's debugger
      - [x] lab 3: Timing and Randomized Testing
      - [x] lab 4: Debugging and Git exercises
-     - [ ] lab 5: Unionfind (Disjoint Sets)
-     - [ ] lab 6: Getting started on Project2
+     - [x] lab 5: Unionfind (Disjoint Sets)
+     - [ ] lab 6: Canine Capers (Java I/O and serialization)
      - [ ] lab 7: BST Map
      - [ ] lab 8: Hash Map
      - [ ] lab 12: Getting started on Project3
