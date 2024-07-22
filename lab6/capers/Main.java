@@ -42,7 +42,7 @@ public class Main {
         if (args.length == 0) {
             Utils.exitWithError("Must have at least one argument");
         }
-        System.out.println("args: " + Arrays.toString(args));
+        //System.out.println("args: " + Arrays.toString(args));
 
         CapersRepository.setupPersistence();
         String text;
@@ -71,7 +71,7 @@ public class Main {
             break;
         case "birthday":
             validateNumArgs("birthday", args, 2);
-            CapersRepository.celebrateBirthday(args[2]);
+            CapersRepository.celebrateBirthday(args[1]);
             break;
         default:
             exitWithError(String.format("Unknown command: %s", args[0]));
