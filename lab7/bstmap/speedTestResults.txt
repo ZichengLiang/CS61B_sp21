@@ -1,0 +1,46 @@
+## Insert random speed test results
+ - length of each string: 1024
+ - number of strings: 1024 (2 ^ 10)
+ impl    | time |
+ -----------------
+ ULLMap  | 0.04 |
+ BSTMap  | 0.01 |
+ JTMap   | 0.01 |
+ JHMap   | 0.01 |
+
+ - length of each string: 1024
+ - number of strings: 65536 (2 ^ 16)
+ impl    | time  |
+ -----------------
+ ULLMap  | 35.69 |
+ BSTMap  | 0.60  |
+ JTMap   | 0.57  |
+ JHMap   | 0.60  |
+
+ - length of each string: 1024
+ - number of strings: 1048576 (2 ^ 20)
+ impl    | time  |
+ -----------------
+ ULLMap  | Stack Overflow |
+ BSTMap  | 10.78 |
+ JTMap   | 10.37 |
+ JHMap   | 10.22 |
+
+ - length of each string: 16
+ - number of strings: 1048576 (2 ^ 20)
+ impl    | time  |
+ -----------------
+ ULLMap  | Stack Overflow |
+ BSTMap  | 1.25 |
+ JTMap   | 0.69 |
+ JHMap   | 0.30 |
+
+ - length of each string: 16
+ - number of strings: 1073741824 (2 ^ 30)
+ impl    | time  |
+ -----------------
+ ULLMap  | Stack Overflow |
+ -- OutOfMemoryError --
+ BSTMap  | |
+ JTMap   | |
+ JHMap   | |
