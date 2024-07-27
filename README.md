@@ -17,7 +17,7 @@
      - [x] lab 4: Debugging and Git exercises
      - [x] lab 5: Unionfind (Disjoint Sets)
      - [x] lab 6: Canine Capers (Java I/O and serialization)
-     - [ ] lab 7: BST Map
+     - [x] lab 7: BST Map
      - [ ] lab 8: Hash Map
      - [ ] lab 12: Getting started on Project3
 ----
