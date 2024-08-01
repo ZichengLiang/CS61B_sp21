@@ -18,6 +18,6 @@
      - [x] lab 5: Unionfind (Disjoint Sets)
      - [x] lab 6: Canine Capers (Java I/O and serialization)
      - [x] lab 7: BST Map
-     - [ ] lab 8: Hash Map
-     - [ ] lab 12: Getting started on Project3
+     - [x] lab 8: Hash Map
+     - [ ] lab 9: Left Leaning Red Black Tree
 ----
