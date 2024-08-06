@@ -2,13 +2,21 @@ package gitlet;
 
 // TODO: any imports you need here
 
-import java.util.Date; // TODO: You'll likely use this in this class
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.chrono.ChronoLocalDateTime;
+import java.util.List;
 
 /** Represents a gitlet commit object.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
+ * Combinations of:
+ * 1) log messages,
+ * 2) other metadata (commit date, author, etc.),
+ * 3) a reference to a tree, and references to parent commits.
  *
- *  @author TODO
+ * The repository also maintains a mapping from branch heads to references to commits,
+ * so that certain important commits have symbolic names
+ *
+ *  @author Zicheng Liang
  */
 public class Commit {
     /**
@@ -19,8 +27,27 @@ public class Commit {
      * variable is used. We've provided one example for `message`.
      */
 
-    /** The message of this Commit. */
+    // metadata
     private String message;
-
+    private String ID;
+    private List<String> parentID;
+    private LocalDateTime timeStamp;
+    private Tree commitTree;
     /* TODO: fill in the rest of this class. */
+
+    /** the default commit constructor is set for the initial commit */
+    public Commit() {
+        message = "initial commit";
+        timeStamp = LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0, 0);
+        ID = Utils.sha1(message, timeStamp);
+    }
+
+    public Commit(String message) {
+        this.message = message;
+    }
+
+    String getID() {
+        return ID;
+    }
+
 }
