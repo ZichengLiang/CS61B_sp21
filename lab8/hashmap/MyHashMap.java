@@ -104,9 +104,6 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return new Collection[tableSize];
     }
 
-    // TODO: Implement the methods of the Map61B Interface below
-    // Your code won't compile until you do so!
-
     @Override
     public void clear() {
         for (Collection<Node> bucket : buckets) {
@@ -223,7 +220,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return null;
     }
 
-    public void resize() {
+    private void resize() {
         if ( (double) numElements / (double) numBuckets >= LOAD_FACTOR) {
             Collection<Node>[] newTable = createTable(numBuckets * 2);
             for (K key : this) {
