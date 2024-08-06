@@ -3,6 +3,7 @@ package bstmap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.TreeSet;
 
 import edu.princeton.cs.algs4.BST;
 
@@ -136,7 +137,24 @@ public class BSTMap<K extends Comparable, V> implements Map61B<K, V>{
 
     @Override
     public Set keySet() {
-        throw new UnsupportedOperationException();
+        Set<K> returnSet = new TreeSet<>();
+        BSTNode curr = root;
+
+        treeWalk(curr, returnSet);
+
+        return returnSet;
+    }
+
+    public void treeWalk(BSTNode curr, Set<K> returnSet) {
+        if (curr.key != null) {
+            returnSet.add(curr.key);
+            if (curr.getLeft() != null) {
+                treeWalk(curr.getLeft(), returnSet);
+            }
+            if (curr.getRight() != null) {
+                treeWalk(curr.getRight(), returnSet);
+            }
+        }
     }
 
     @Override
