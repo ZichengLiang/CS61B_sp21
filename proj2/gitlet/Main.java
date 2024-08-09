@@ -12,70 +12,74 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
     static Repository repo = new Repository();
-    public static void main(String[] args) throws IOException {
-        if (args.length > 0) {
-            String firstArg = args[0];
-            switch(firstArg) {
-                case "init":
-                    if (args.length == 1) {
-                        repo.init();
-                    } else {
-                        System.err.println("Incorrect operands.");
-                    }
-                    break;
-                case "add":
-                    String[] fileNames = new String[args.length - 1];
-                    for (int i = 0; i < fileNames.length; i++) {
-                        File theFile = new File(fileNames[i]);
-                        if (theFile.isFile()) {
-                            repo.stage(new Tree(fileNames[i], new Blob(theFile)));
-                        } else{
-                            System.err.println("File does not exist.");
+    public static void main(String[] args)  {
+        try {
+            if (args.length > 0) {
+                String firstArg = args[0];
+                switch(firstArg) {
+                    case "init":
+                        if (args.length == 1) {
+                            repo.init();
+                        } else {
+                            System.err.println("Incorrect operands.");
                         }
-                    }
-                    break;
-                case "commit":
-                    if (args.length == 2) {
-                        Commit newCommit = new Commit(args[1]);
-                    } else {
-                        System.err.println("Incorrect operands.");
-                    }
-                    break;
-                case "rm":
-                    // TODO: handle the `rm [filename]` command
-                    break;
-                case "log":
-                    if (args.length == 1) {
-                        // TODO: this should print the commmits made in the current branch
-                    } else {
-                        System.err.println("Incorrect operands.");
-                    }
-                    break;
-                case "global-log":
-                    if (args.length == 1) {
-                        repo.printLog();
-                    } else {
-                        System.err.println("Incorrect operands.");
-                    }
-                    break;
-                case "find":
-                    // TODO: handle the `find [commit message]` command
-                    break;
-                case "status":
-                    if (args.length == 1) {
-                        repo = Utils.readObject(Repository.repoFile, repo.getClass());
-                        printStatus();
-                    } else {
-                        System.err.println("Incorrect operands.");
-                    }
-                    break;
+                        break;
+                    case "add":
+                        String[] fileNames = new String[args.length - 1];
+                        for (int i = 0; i < fileNames.length; i++) {
+                            File theFile = new File(fileNames[i]);
+                            if (theFile.isFile()) {
+                                repo.stage(new Tree(fileNames[i], new Blob(theFile)));
+                            } else{
+                                System.err.println("File does not exist.");
+                            }
+                        }
+                        break;
+                    case "commit":
+                        if (args.length == 2) {
+                            Commit newCommit = new Commit(args[1]);
+                        } else {
+                            System.err.println("Incorrect operands.");
+                        }
+                        break;
+                    case "rm":
+                        // TODO: handle the `rm [filename]` command
+                        break;
+                    case "log":
+                        if (args.length == 1) {
+                            // TODO: this should print the commmits made in the current branch
+                        } else {
+                            System.err.println("Incorrect operands.");
+                        }
+                        break;
+                    case "global-log":
+                        if (args.length == 1) {
+                            repo.printLog();
+                        } else {
+                            System.err.println("Incorrect operands.");
+                        }
+                        break;
+                    case "find":
+                        // TODO: handle the `find [commit message]` command
+                        break;
+                    case "status":
+                        if (args.length == 1) {
+                            repo = Utils.readObject(Repository.repoFile, repo.getClass());
+                            printStatus();
+                        } else {
+                            System.err.println("Incorrect operands.");
+                        }
+                        break;
                     // TODO: ... more commands from `checkout`
-                default:
-                    System.err.println("No command with that name exists.");
-                    break;
+                    default:
+                        System.err.println("No command with that name exists.");
+                        break;
+                }
+            } else {
+                System.err.println("Please enter a command.");
             }
-        } else {
-            System.err.println("Please enter a command.");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

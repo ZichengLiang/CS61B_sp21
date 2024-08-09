@@ -47,7 +47,8 @@ public class Commit implements Serializable {
         message = "initial commit";
         timeStamp = LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0, 0);
         ID = Utils.sha1(message, timeStamp.toString());
-        log = ("===\ncommit " + ID + "\n" + "Date: " + timeStamp.toString() + "\n" + message + "\n");
+        log = ("===\ncommit " + ID + "\n" +
+                "Date: " + timeStamp.toString() + "\n" + message + "\n");
         dirLocation = Utils.join(Repository.GITLET_OBJ, ID.substring(0, 2));
         fileLocation = Utils.join(dirLocation, ID.substring(2));
         this.makeObject();
