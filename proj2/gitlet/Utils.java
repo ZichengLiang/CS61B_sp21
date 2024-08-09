@@ -236,4 +236,12 @@ class Utils {
         System.out.printf(msg, args);
         System.out.println();
     }
+    /** Append the given String to the specified file */
+    static String appendFile(File file, String msg) {
+        String s = readContentsAsString(file);
+        s = s + msg;
+        writeContents(file, s);
+        return s;
+    }
+
 }
