@@ -3,7 +3,9 @@ package gitlet;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,82 +29,79 @@ public class Repository implements Serializable {
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
+    /** The .gitlet/objects directory where we store the file backups. */
     public static final File GITLET_OBJ = join(GITLET_DIR, "objects");
-    public static final File repoFile = new File(".gitlet/repo");
-    public static final File aStageArea = new File(".gitlet/aStaged");
-    public Map<String, Branch> branches = new TreeMap<>();
-    public Commit head;
-    public List<Tree> aStage = new LinkedList<>(); // this list is often modified
+    public static final File STAGE = join(GITLET_DIR, "stages");
+    public static final File STAGE_FOR_ADDITION = join(STAGE, "addition");
+    public static final File STAGE_FOR_REMOVAL = join(STAGE, "removal");
+    public static final File repoState = new File(".gitlet/repo");
 
+    /** other information in the repository */
+    private Commit head;
+    protected String currentBranch;
+    protected List<String> branches = new ArrayList<>();
+    public List<Commit> commitTree = new LinkedList<>();
+    public Map<String, String> trackedFiles = new HashMap<>();
+    public Map<String, String> untrackedFiles = new HashMap<>();
     public void init() throws IOException {
         if (!GITLET_DIR.exists()) {
+            // create all subdirectories
             GITLET_OBJ.mkdirs();
-            // mkdirs also creates parent dirs, in this case including GITLET_DIR;
-            branches.put("master", new Branch());
-            head = branches.get("master").commits.get(0);
+            STAGE_FOR_ADDITION.mkdirs();
+            STAGE_FOR_REMOVAL.mkdirs();
+
+            currentBranch = "master";
+            branches.add(currentBranch);
+
+            commitTree.add(new Commit());
         } else {
             System.err.println("A Gitlet version-control system already exists in the current directory.");
+            return;
         }
 
-        if (!repoFile.exists()) {
-            try {
-                repoFile.createNewFile();
-                Utils.writeObject(repoFile, this);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        repoState.createNewFile();
+    }
+
+    public void makeCommit(String message, String branch) throws IOException {
+        Commit newCommit = new Commit(message, head, branch);
+        commitTree.add(newCommit);
+        head = commitTree.getLast();
+
+        for (Blob blob : newCommit.getBlobTree()) {
+            trackedFiles.put(blob.name, blob.ID);
+        }
+    }
+    public void makeCommit(String message) throws IOException {
+        makeCommit(message, currentBranch);
+    }
+
+    public boolean add(File file, String fileName) {
+        if(STAGE_FOR_ADDITION.exists()) {
+            // below handles the situation when a file is changed, added, and then changed back to its original version
+            if (Utils.plainFilenamesIn(Repository.STAGE_FOR_ADDITION).contains(fileName)
+                    // the stage has a file with the same name
+                    && Utils.sha1(file)
+                            .equals(Utils.sha1(Utils.join(Repository.STAGE_FOR_ADDITION, fileName)))
+                    // the file in stage has the same content with target file
+                    && this.trackedFiles.containsKey(fileName)
+                    // the target file has already been tracked
+            ) {
+                Utils.restrictedDelete(Utils.join(Repository.STAGE_FOR_ADDITION, fileName));
+                // remove the file from the stage for addition
+                return true;
             }
-        }
-    }
-
-    public void setHead(String ID) {
-        this.head = branches.get("master").getCommit(ID);
-    }
-
-    /** returns a list of files that have not been added to the repository.
-     *  returns null if there's no such file. **/
-    /*
-    public List<String> checkDiffFiles() {
-        List<String> diffFiles = new ArrayList<>();
-        for(String s : actualFiles) {
-            if (!currentFiles.contains(s)) {
-                diffFiles.add(s);
-            }
-        }
-        return diffFiles;
-    }
-     */
-
-    /*
-    public void printDiffFiles() {
-        for(String s : checkDiffFiles()) {
-            System.out.println(s);
-        }
-    }
-     */
-
-    /** returns a list of the names of all plain files in the current working dir,
-     *  in lexicographical order as Java strings. Return null if CWD is empty. */
-    public List<String> allFilesInCWD() {
-        String[] files = CWD.list();
-        if (files == null) {
-            return null;
+            // the normal situation: copy the file from CWD to the stage for addition
+            byte[] content = Utils.readContents(file);
+            File fileToAdd = Utils.join(STAGE_FOR_ADDITION, fileName);
+            Utils.writeContents(fileToAdd, content);
+            return true;
         } else {
-            Arrays.sort(files);
-            return Arrays.asList(files);
+            return false;
         }
     }
 
-    public void stage(Tree tree) throws IOException {
-        aStage.add(tree);
-        if (!aStageArea.exists()) {
-            aStageArea.createNewFile();
-        }
-        LinkedList<Tree> existingTree = Utils.readObject(aStageArea, LinkedList.class);
-        existingTree.add(tree);
-        Utils.writeObject(aStageArea, existingTree);
-    }
-
-    public void printLog() {
+    public void printGlobalLog() {
         System.out.println(Utils.readContentsAsString(Utils.join(".gitlet", "logs")));
     }
 }
+

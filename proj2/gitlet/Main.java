@@ -2,6 +2,8 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 /** Driver class for Gitlet, a subset of the Git version-control system.
  *  @author Zicheng Liang
@@ -11,8 +13,14 @@ public class Main {
     /** Usage: java gitlet.Main ARGS, where ARGS contains
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
-    static Repository repo = new Repository();
+    static Repository repo;
     public static void main(String[] args)  {
+        if (!Repository.repoState.exists()) {
+            repo = new Repository();
+        } else {
+            repo = Utils.readObject(Repository.repoState, Repository.class);
+        }
+
         try {
             if (args.length > 0) {
                 String firstArg = args[0];
@@ -25,25 +33,33 @@ public class Main {
                         }
                         break;
                     case "add":
-                        String[] fileNames = new String[args.length - 1];
-                        for (int i = 0; i < fileNames.length; i++) {
-                            File theFile = new File(fileNames[i]);
-                            if (theFile.isFile()) {
-                                repo.stage(new Tree(fileNames[i], new Blob(theFile)));
-                            } else{
+                        /** in gitlet, only one file may be added at a time */
+                        if (args.length == 2) {
+                            String fileName = args[1];
+                            if (Utils.plainFilenamesIn(Repository.CWD)
+                                     .contains(fileName)) {
+                                File target = Utils.join(Repository.CWD, fileName);
+                                repo.add(target, fileName);
+                            } else {
                                 System.err.println("File does not exist.");
                             }
+                        } else {
+                            System.err.println("Incorrect operands.");
                         }
                         break;
                     case "commit":
                         if (args.length == 2) {
-                            Commit newCommit = new Commit(args[1]);
+                            repo.makeCommit(args[1]);
                         } else {
                             System.err.println("Incorrect operands.");
                         }
                         break;
                     case "rm":
-                        // TODO: handle the `rm [filename]` command
+                        if (args.length == 2) {
+                            // TODO: handle the `rm [filename]` command
+                        } else {
+                            System.err.println("Incorrect operands.");
+                        }
                         break;
                     case "log":
                         if (args.length == 1) {
@@ -54,7 +70,7 @@ public class Main {
                         break;
                     case "global-log":
                         if (args.length == 1) {
-                            repo.printLog();
+                            repo.printGlobalLog();
                         } else {
                             System.err.println("Incorrect operands.");
                         }
@@ -64,7 +80,7 @@ public class Main {
                         break;
                     case "status":
                         if (args.length == 1) {
-                            repo = Utils.readObject(Repository.repoFile, repo.getClass());
+                            repo = Utils.readObject(Repository.repoState, repo.getClass());
                             printStatus();
                         } else {
                             System.err.println("Incorrect operands.");
@@ -81,40 +97,38 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Utils.writeObject(Repository.repoState, repo);
     }
 
     public static void printStatus() {
         StringBuilder status = new StringBuilder();
 
         status.append("=== Branches ===\n");
-        for(Branch b : repo.branches.values()) {
-            if (b.isCurrent(repo.head)) {
-                status.append("*").append(b.name).append("\n");
-            } else {
-                status.append(b.name).append("\n");
+        for (String branch : repo.branches) {
+            if (branch.equals(repo.currentBranch)) {
+                status.append("*");
             }
+            status.append(branch).append("\n");
         }
         status.append("\n");
 
         status.append("=== Staged Files ===\n");
-        for (Tree t : repo.aStage) {
-            System.out.println(t.map.keySet());
-        } // TODO: test if this works
-        status.append("\n");
+        status.append(Utils.plainFilenamesIn(Repository.STAGE_FOR_ADDITION));
+        status.append("\n\n");
 
         status.append("=== Removed Files ===\n");
-        //TODO: complete removed files and finish this
-        status.append("\n");
+        status.append(Utils.plainFilenamesIn(Repository.STAGE_FOR_REMOVAL));
+        status.append("\n\n");
 
         status.append("=== Modifications Not Staged For Commit ===\n");
         //TODO: complete related functions, sample:
         // junk.txt (deleted)
         // wug3.txt (modified)
-        status.append("\n");
+        status.append("\n\n");
 
         status.append("=== Untracked Files ===\n");
         // TODO: complete this.
-        status.append("\n");
+        status.append("\n\n");
 
        System.out.println(status.toString());
     }

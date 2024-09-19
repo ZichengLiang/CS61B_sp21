@@ -13,36 +13,16 @@ import jh61b.junit.In;
  */
 
 public class Blob implements Serializable {
-    // For a blob:
-    // if there's change in the file, save its contents
-    // otherwise, save a reference to the last version of the file
-
-    public Blob last;
     public File file;
-    public String id;
+    public String ID;
+    public String name;
 
-    /** the "root" blob points to itself
-     *  isRoot method can return a boolean whether it is a root or not */
-    Blob (File file) {
-        this.last = this;
-        this.file = file;
-        this.id = Utils.sha1(file);
+    Blob (String fileName) {
+       name = fileName;
+       file = new File(Repository.STAGE_FOR_ADDITION + "/" + fileName);
+       ID = Utils.sha1(Utils.readContentsAsString(file));
     }
-    public boolean isRoot() {
-        return this.last.equals(this);
-    }
-
-    /** the "successor" blob successes another root/successor blob.
-     *  isSuc method can return a boolean whether it is a successor or not */
-    Blob (Blob last, File file) {
-        this.last = last;
-        this.file = file;
-    }
-    public boolean isSuc() {
-        return (!this.last.equals(this)) && (this.file != null);
-    }
-
     public boolean checkDiff(Blob otherBlob) {
-        return this.id.equals(otherBlob.id);
+        return this.ID.equals(otherBlob.ID);
     }
 }

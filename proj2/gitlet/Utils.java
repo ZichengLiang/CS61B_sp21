@@ -65,6 +65,18 @@ class Utils {
 
     /* FILE DELETION */
 
+    static boolean delete(File file) {
+        if (!file.isDirectory()) {
+            return file.delete();
+        } else {
+            return false;
+        }
+    }
+
+    static boolean delete(String file) {
+        return delete(new File(file));
+    }
+
     /** Deletes FILE if it exists and is not a directory.  Returns true
      *  if FILE was deleted, and false otherwise.  Refuses to delete FILE
      *  and throws IllegalArgumentException unless the directory designated by

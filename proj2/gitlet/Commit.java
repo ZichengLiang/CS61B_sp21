@@ -1,7 +1,5 @@
 package gitlet;
 
-// TODO: any imports you need here
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -23,64 +21,106 @@ import java.util.List;
  */
 public class Commit implements Serializable {
     /**
-     * TODO: add instance variables here.
+     * Combinations of log messages, other metadata (commit date, author, etc.), a reference to a tree, and references to parent commits.
+     * The repository also maintains a mapping from branch heads to references to commits, so that certain important commits have symbolic names.
      *
-     * List all instance variables of the Commit class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided one example for `message`.
      */
 
-    // metadata
+    /** message & ID */
     private String message;
     private String ID;
-    private List<String> parentID;
+    private Commit parent;
+
+    /** metadata */
     private LocalDateTime timeStamp;
-    private Tree commitTree;
+    private Tree blobTree = new Tree();
     public String log;
-    public final File dirLocation;
-    public final File fileLocation;
+    private String branch;
+    public File fileLocation;
     public final File logLocation = Utils.join(Repository.GITLET_DIR, "logs");
-    /* TODO: fill in the rest of this class. */
+
+    public Commit(String message, LocalDateTime timeStamp, Commit parent, String branch) throws IOException {
+        this.message = message;
+        this.timeStamp = timeStamp;
+        ID = Utils.sha1(message, timeStamp.toString());
+
+        this.parent = parent;
+
+        this.branch = branch;
+
+        fileLocation = makeFileLocation(ID);
+
+        saveBlobs();
+        this.makeObject(fileLocation);
+
+        log = generateLog(ID, this.timeStamp, this.message);
+        this.writeGlobalLog();
+    }
+
+    public Commit(String message, Commit parent, String branch) throws IOException {
+        new Commit(message, LocalDateTime.now(), parent, branch);
+    }
+
+    public Commit (String message, Commit parent) throws IOException {
+        new Commit(message, LocalDateTime.now(), parent, parent.branch);
+    }
+    public Commit (String message, LocalDateTime timeStamp) throws IOException {
+        new Commit(message, timeStamp, null, "master");
+    }
 
     /** the default commit constructor is set for the initial commit */
     public Commit() throws IOException {
-        message = "initial commit";
-        timeStamp = LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0, 0);
-        ID = Utils.sha1(message, timeStamp.toString());
-        log = ("===\ncommit " + ID + "\n" +
-                "Date: " + timeStamp.toString() + "\n" + message + "\n");
-        dirLocation = Utils.join(Repository.GITLET_OBJ, ID.substring(0, 2));
-        fileLocation = Utils.join(dirLocation, ID.substring(2));
-        this.makeObject();
-        this.writeLog();
-    }
-
-    public Commit(String message) throws IOException {
-        this.message = message;
-        timeStamp = LocalDateTime.now();
-        ID = Utils.sha1(message, timeStamp);
-        dirLocation = Utils.join(Repository.GITLET_OBJ, ID.substring(0, 2));
-        fileLocation = Utils.join(dirLocation, ID.substring(2));
-        commitTree = new Tree(message, Utils.readObject(Repository.aStageArea, Tree.class));
-        this.makeObject();
-        this.writeLog();
-        Utils.restrictedDelete(Repository.aStageArea);
+        new Commit("initial commit",
+                LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0, 0));
     }
 
     String getID() {
         return ID;
     }
 
-    public void makeObject() throws IOException {
-        dirLocation.mkdirs();
+    Commit getParent() {
+        return parent;
+    }
+
+    List<Blob> getBlobTree() {
+        return blobTree.blobs;
+    }
+
+    void saveBlobs() throws IOException {
+        for (Blob blob : getBlobTree()) {
+            makeObject(makeFileLocation(blob.ID));
+        }
+    }
+
+    public void makeObject(File fileLocation) throws IOException {
         Utils.writeObject(fileLocation, this);
     }
 
-    public void writeLog() throws IOException {
+    /** write global logs as the commits go on */
+    public void writeGlobalLog() throws IOException {
         if (!logLocation.exists()) {
             logLocation.createNewFile();
         }
-
         Utils.appendFile(logLocation, log);
     }
+
+    /** generate the log for the Commit */
+    private String generateLog(String ID, LocalDateTime timeStamp, String message) {
+        return ("===\ncommit " + ID + "\n" +
+                "Date: " + timeStamp.toString() + "\n" + message + "\n");
+    }
+
+    /** return a file which follows such pattern:
+     *  - objects
+     *      - ID[0]ID[1] (directory)
+     *          - ID[rest] (file)
+     * @param ID
+     * @return fileLocation;
+     */
+    private File makeFileLocation(String ID) {
+        File dirLocation = Utils.join(Repository.GITLET_OBJ, ID.substring(0, 2));
+        dirLocation.mkdirs();
+        return new File(dirLocation.toString() + "/" +  ID.substring(2));
+    }
+
 }
