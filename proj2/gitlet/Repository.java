@@ -137,7 +137,7 @@ public class Repository implements Serializable {
         System.out.println(recursiveLog(head, ""));
     }
     private String recursiveLog(Commit current, String log) {
-        //TODO: Cannot invoke "Object.equals(Object)" because "current" is null
+        //TASK: Cannot invoke "Object.equals(Object)" because "current" is null
         if (current.equals(commitTree.get(0))) {
             return log + commitTree.get(0).getLog();
         } else {
@@ -183,7 +183,7 @@ public class Repository implements Serializable {
             if (!CWDFiles.contains(fileName)) {
                 status.append(fileName).append(" (deleted)");
             } else if (true){
-               //TODO: complete the (modified) list
+               //TASK: complete the (modified) list
             }
             status.append("\n");
         }

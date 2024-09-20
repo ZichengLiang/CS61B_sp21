@@ -2,8 +2,6 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 
 /** Driver class for Gitlet, a subset of the Git version-control system.

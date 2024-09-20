@@ -15,7 +15,7 @@ public class Blob implements Serializable {
     protected String ID;
     protected String name;
 
-    Blob (String fileName) {
+    Blob(String fileName) {
         name = fileName;
         file = new File(Repository.STAGE_FOR_ADDITION + "/" + fileName);
         ID = Utils.sha1(Utils.readContentsAsString(file));

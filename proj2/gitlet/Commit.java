@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.chrono.ChronoLocalDateTime;
 import java.util.List;
 
 /** Represents a gitlet commit object.
@@ -70,10 +69,10 @@ public class Commit implements Serializable {
         new Commit(message, LocalDateTime.now(), parent, branch);
     }
 
-    public Commit (String message, Commit parent) throws IOException {
+    public Commit(String message, Commit parent) throws IOException {
         new Commit(message, LocalDateTime.now(), parent, parent.branch);
     }
-    public Commit (String message, LocalDateTime timeStamp) throws IOException {
+    public Commit(String message, LocalDateTime timeStamp) throws IOException {
         new Commit(message, timeStamp, null, "master");
     }
 
