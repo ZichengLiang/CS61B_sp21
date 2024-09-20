@@ -21,7 +21,6 @@ public class Tree implements Serializable {
 
     Tree() {
         for (String fileName : Utils.plainFilenamesIn(Repository.STAGE_FOR_ADDITION)) {
-            System.out.println("trying to wrap: " + fileName + " into the tree");
             blobs.add(new Blob(fileName));
             Utils.delete(Repository.STAGE_FOR_ADDITION + "/" + fileName);
         }

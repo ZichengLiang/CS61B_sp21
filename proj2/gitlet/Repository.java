@@ -174,6 +174,7 @@ public class Repository implements Serializable {
          junk.txt (deleted)
          wug3.txt (modified)
          */
+        /*
         Set<String> tracked = trackedFiles.keySet();
         List<String> CWDFiles = Utils.plainFilenamesIn(CWD);
 
@@ -185,13 +186,16 @@ public class Repository implements Serializable {
             }
             status.append("\n");
         }
+         */
 
         status.append("\n=== Untracked Files ===\n");
+        /*
         for (String fileName : CWDFiles) {
             if (!tracked.contains(fileName)) {
                 status.append(fileName).append("\n");
             }
         }
+        */
         System.out.println(status.toString());
     }
 }
