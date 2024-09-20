@@ -75,18 +75,24 @@ public class Repository implements Serializable {
         makeCommit(message, currentBranch);
     }
 
+    public void setCurrentBranch(String name) {
+        currentBranch = name;
+        branches.add(name);
+    }
+
     public boolean add(File file, String fileName) {
         if(STAGE_FOR_ADDITION.exists()) {
+            File CWDFile = new File(Repository.CWD + "/" + fileName);
+            File STGFile = new File(Repository.STAGE_FOR_ADDITION + "/" + fileName);
             // below handles the situation when a file is changed, added, and then changed back to its original version
             if (Utils.plainFilenamesIn(Repository.STAGE_FOR_ADDITION).contains(fileName)
                     // the stage has a file with the same name
-                    && Utils.sha1(file)
-                            .equals(Utils.sha1(Utils.join(Repository.STAGE_FOR_ADDITION, fileName)))
+                    && Utils.sha1(Utils.readContentsAsString(CWDFile)).equals(Utils.sha1(Utils.readContentsAsString(STGFile)))
                     // the file in stage has the same content with target file
                     && this.trackedFiles.containsKey(fileName)
                     // the target file has already been tracked
             ) {
-                Utils.restrictedDelete(Utils.join(Repository.STAGE_FOR_ADDITION, fileName));
+                Utils.delete(STGFile);
                 // remove the file from the stage for addition
                 return true;
             }
@@ -102,6 +108,38 @@ public class Repository implements Serializable {
 
     public void printGlobalLog() {
         System.out.println(Utils.readContentsAsString(Utils.join(".gitlet", "logs")));
+    }
+
+    public void printStatus() {
+        StringBuilder status = new StringBuilder();
+
+        status.append("=== Branches ===\n");
+        for (String branch : branches) {
+            if (branch.equals(currentBranch)) {
+                status.append("*");
+            }
+            status.append(branch).append("\n");
+        }
+
+        status.append("\n=== Staged Files ===\n");
+        for (String fileName : Utils.plainFilenamesIn(Repository.STAGE_FOR_ADDITION)) {
+            status.append(fileName).append("\n");
+        }
+
+        status.append("\n=== Removed Files ===\n");
+        for (String fileName : Utils.plainFilenamesIn(Repository.STAGE_FOR_REMOVAL)) {
+            status.append(fileName).append("\n");
+        }
+
+        status.append("\n=== Modifications Not Staged For Commit ===\n");
+        //TODO: complete related functions, sample:
+        // junk.txt (deleted)
+        // wug3.txt (modified)
+
+        status.append("\n=== Untracked Files ===\n");
+        // TODO: complete this.
+
+        System.out.println(status.toString());
     }
 }
 

@@ -81,12 +81,19 @@ public class Main {
                     case "status":
                         if (args.length == 1) {
                             repo = Utils.readObject(Repository.repoState, repo.getClass());
-                            printStatus();
+                            repo.printStatus();
                         } else {
                             System.err.println("Incorrect operands.");
                         }
                         break;
+                    case "branch" :
+                        if (args.length == 2) {
+                            repo.setCurrentBranch(args[1]);
+                        } else {
+                            System.err.println("Incorrect operands.");
+                        }
                     // TODO: ... more commands from `checkout`
+
                     default:
                         System.err.println("No command with that name exists.");
                         break;
@@ -98,38 +105,5 @@ public class Main {
             e.printStackTrace();
         }
         Utils.writeObject(Repository.repoState, repo);
-    }
-
-    public static void printStatus() {
-        StringBuilder status = new StringBuilder();
-
-        status.append("=== Branches ===\n");
-        for (String branch : repo.branches) {
-            if (branch.equals(repo.currentBranch)) {
-                status.append("*");
-            }
-            status.append(branch).append("\n");
-        }
-        status.append("\n");
-
-        status.append("=== Staged Files ===\n");
-        status.append(Utils.plainFilenamesIn(Repository.STAGE_FOR_ADDITION));
-        status.append("\n\n");
-
-        status.append("=== Removed Files ===\n");
-        status.append(Utils.plainFilenamesIn(Repository.STAGE_FOR_REMOVAL));
-        status.append("\n\n");
-
-        status.append("=== Modifications Not Staged For Commit ===\n");
-        //TODO: complete related functions, sample:
-        // junk.txt (deleted)
-        // wug3.txt (modified)
-        status.append("\n\n");
-
-        status.append("=== Untracked Files ===\n");
-        // TODO: complete this.
-        status.append("\n\n");
-
-       System.out.println(status.toString());
     }
 }
