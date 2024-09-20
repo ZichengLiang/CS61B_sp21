@@ -2,15 +2,11 @@ package gitlet;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.hamcrest.core.Every;
 
 /**
- * trees: directory structures mapping names to references to blobs and other trees (subdirectories).
+ * trees: directory structures mapping names to references
+ * to blobs and other trees(subdirectories).
  * @author Zicheng Liang
  */
 public class Tree implements Serializable {

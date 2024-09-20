@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 /** Represents a gitlet commit object.
  * Combinations of:
@@ -22,9 +21,10 @@ import java.util.Objects;
  */
 public class Commit implements Serializable {
     /**
-     * Combinations of log messages, other metadata (commit date, author, etc.), a reference to a tree, and references to parent commits.
-     * The repository also maintains a mapping from branch heads to references to commits, so that certain important commits have symbolic names.
-     *
+     * Combinations of log messages, other metadata (commit date, author, etc.),
+     * a reference to a tree, and references to parent commits.
+     * The repository also maintains a mapping from branch heads to references to commits,
+     * so that certain important commits have symbolic names.
      */
 
     /** message & ID */
@@ -37,10 +37,11 @@ public class Commit implements Serializable {
     private Tree blobTree = new Tree();
     private String log;
     private String branch;
-    public File fileLocation;
-    public final File logLocation = Utils.join(Repository.GITLET_DIR, "logs");
+    protected File fileLocation;
+    protected final File logLocation = Utils.join(Repository.GITLET_DIR, "logs");
 
-    public Commit(String message, LocalDateTime timeStamp, Commit parent, String branch) throws IOException {
+    public Commit(String message, LocalDateTime timeStamp,
+                  Commit parent, String branch) throws IOException {
         this.message = message;
         this.timeStamp = timeStamp;
 
@@ -100,8 +101,8 @@ public class Commit implements Serializable {
         }
     }
 
-    public void makeObject(File fileLocation) throws IOException {
-        Utils.writeObject(fileLocation, this);
+    public void makeObject(File location) throws IOException {
+        Utils.writeObject(location, this);
     }
 
     /** write global logs as the commits go on */
@@ -113,22 +114,23 @@ public class Commit implements Serializable {
     }
 
     /** generate the log for the Commit */
-    private String generateLog(String ID, LocalDateTime timeStamp, String message) {
-        return ("===\ncommit " + ID + "\n" +
-                "Date: " + timeStamp.toString() + "\n" + message + "\n");
+    private String generateLog(String id, LocalDateTime time, String commitMessage) {
+        return ("===\ncommit " + id + "\n"
+                + "Date: " + time.toString()
+                + "\n" + commitMessage + "\n");
     }
 
     /** return a file which follows such pattern:
      *  - objects
      *      - ID[0]ID[1] (directory)
      *          - ID[rest] (file)
-     * @param ID
+     * @param id
      * @return fileLocation;
      */
-    private File makeFileLocation(String ID) {
-        File dirLocation = Utils.join(Repository.GITLET_OBJ, ID.substring(0, 2));
+    private File makeFileLocation(String id) {
+        File dirLocation = Utils.join(Repository.GITLET_OBJ, id.substring(0, 2));
         dirLocation.mkdirs();
-        return new File(dirLocation.toString() + "/" +  ID.substring(2));
+        return new File(dirLocation.toString() + "/" +  id.substring(2));
     }
 
     protected String getLog() {

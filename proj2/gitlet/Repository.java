@@ -4,13 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import static gitlet.Utils.*;
 
@@ -33,16 +30,16 @@ public class Repository implements Serializable {
     public static final File STAGE = join(GITLET_DIR, "stages");
     public static final File STAGE_FOR_ADDITION = join(STAGE, "addition");
     public static final File STAGE_FOR_REMOVAL = join(STAGE, "removal");
-    public static final File repoState = new File(".gitlet/repo");
+    public static final File REPO_STATE = new File(".gitlet/repo");
 
     /** other information in the repository */
     private Commit head;
     protected String currentBranch;
     protected List<String> branches = new ArrayList<>();
-    public List<Commit> commitTree = new LinkedList<>();
-    public Map<String, String> trackedFiles = new HashMap<>();
+    protected List<Commit> commitTree = new LinkedList<>();
+    protected Map<String, String> trackedFiles = new HashMap<>();
     // key: name; value: hashcode
-    public Map<String, String> untrackedFiles = new HashMap<>();
+    protected Map<String, String> untrackedFiles = new HashMap<>();
 
     /* METHODS */
     public void init() throws IOException {
@@ -57,11 +54,13 @@ public class Repository implements Serializable {
 
             commitTree.add(new Commit());
         } else {
-            System.err.println("A Gitlet version-control system already exists in the current directory.");
+            System.err.println(
+                    "A Gitlet version-control system already exists in the current directory."
+            );
             return;
         }
 
-        repoState.createNewFile();
+        REPO_STATE.createNewFile();
     }
 
     public void makeCommit(String message, String branch) throws IOException {
@@ -83,18 +82,20 @@ public class Repository implements Serializable {
     }
 
     public boolean add(File file, String fileName) {
-        if(STAGE_FOR_ADDITION.exists()) {
-            File CWDFile = new File(Repository.CWD + "/" + fileName);
-            File STGFile = new File(Repository.STAGE_FOR_ADDITION + "/" + fileName);
-            // below handles the situation when a file is changed, added, and then changed back to its original version
+        if (STAGE_FOR_ADDITION.exists()) {
+            File cwdFile = new File(Repository.CWD + "/" + fileName);
+            File stgFile = new File(Repository.STAGE_FOR_ADDITION + "/" + fileName);
+            // below handles the situation when a file is changed, added,
+            // and then changed back to its original version
             if (Utils.plainFilenamesIn(Repository.STAGE_FOR_ADDITION).contains(fileName)
                     // the stage has a file with the same name
-                    && Utils.sha1(Utils.readContentsAsString(CWDFile)).equals(Utils.sha1(Utils.readContentsAsString(STGFile)))
+                    && Utils.sha1(Utils.readContentsAsString(cwdFile))
+                            .equals(Utils.sha1(Utils.readContentsAsString(stgFile)))
                     // the file in stage has the same content with target file
                     && this.trackedFiles.containsKey(fileName)
                     // the target file has already been tracked
             ) {
-                Utils.delete(STGFile);
+                Utils.delete(stgFile);
                 // remove the file from the stage for addition
                 return true;
             }

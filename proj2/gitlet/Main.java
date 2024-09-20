@@ -16,10 +16,10 @@ public class Main {
      */
     static Repository repo;
     public static void main(String[] args)  {
-        if (!Repository.repoState.exists()) {
+        if (!Repository.REPO_STATE.exists()) {
             repo = new Repository();
         } else {
-            repo = Utils.readObject(Repository.repoState, Repository.class);
+            repo = Utils.readObject(Repository.REPO_STATE, Repository.class);
         }
 
         try {
@@ -114,6 +114,6 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Utils.writeObject(Repository.repoState, repo);
+        Utils.writeObject(Repository.REPO_STATE, repo);
     }
 }
