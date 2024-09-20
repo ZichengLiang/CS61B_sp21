@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import static gitlet.Utils.*;
@@ -25,11 +26,9 @@ public class Repository implements Serializable {
      * variable is used. We've provided two examples for you.
      */
 
-    /** The current working directory. */
+    /* DIRS AND FILES */
     public static final File CWD = new File(System.getProperty("user.dir"));
-    /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
-    /** The .gitlet/objects directory where we store the file backups. */
     public static final File GITLET_OBJ = join(GITLET_DIR, "objects");
     public static final File STAGE = join(GITLET_DIR, "stages");
     public static final File STAGE_FOR_ADDITION = join(STAGE, "addition");
@@ -42,7 +41,10 @@ public class Repository implements Serializable {
     protected List<String> branches = new ArrayList<>();
     public List<Commit> commitTree = new LinkedList<>();
     public Map<String, String> trackedFiles = new HashMap<>();
+    // key: name; value: hashcode
     public Map<String, String> untrackedFiles = new HashMap<>();
+
+    /* METHODS */
     public void init() throws IOException {
         if (!GITLET_DIR.exists()) {
             // create all subdirectories
@@ -65,7 +67,7 @@ public class Repository implements Serializable {
     public void makeCommit(String message, String branch) throws IOException {
         Commit newCommit = new Commit(message, head, branch);
         commitTree.add(newCommit);
-        head = commitTree.getLast();
+        head = newCommit;
 
         for (Blob blob : newCommit.getBlobTree()) {
             trackedFiles.put(blob.name, blob.ID);
@@ -126,6 +128,22 @@ public class Repository implements Serializable {
         }
     }
 
+    public boolean checkout() {
+        return false;
+    }
+
+    public void printLog() {
+        System.out.println(recursiveLog(head, ""));
+    }
+    private String recursiveLog(Commit current, String log) {
+        //TODO: Cannot invoke "Object.equals(Object)" because "current" is null
+        if (current.equals(commitTree.get(0))) {
+            return log + commitTree.get(0).getLog();
+        } else {
+            log = log + current.getLog();
+            return recursiveLog(current.getParent(), log);
+        }
+    }
     public void printGlobalLog() {
         System.out.println(Utils.readContentsAsString(Utils.join(".gitlet", "logs")));
     }
@@ -152,13 +170,28 @@ public class Repository implements Serializable {
         }
 
         status.append("\n=== Modifications Not Staged For Commit ===\n");
-        //TODO: complete related functions, sample:
-        // junk.txt (deleted)
-        // wug3.txt (modified)
+        /* sample:
+         junk.txt (deleted)
+         wug3.txt (modified)
+         */
+        Set<String> tracked = trackedFiles.keySet();
+        List<String> CWDFiles = Utils.plainFilenamesIn(CWD);
+
+        for (String fileName : tracked) {
+            if (!CWDFiles.contains(fileName)) {
+                status.append(fileName).append(" (deleted)");
+            } else if (true){
+               //TODO: complete the (modified) list
+            }
+            status.append("\n");
+        }
 
         status.append("\n=== Untracked Files ===\n");
-        // TODO: complete this.
-
+        for (String fileName : CWDFiles) {
+            if (!tracked.contains(fileName)) {
+                status.append(fileName).append("\n");
+            }
+        }
         System.out.println(status.toString());
     }
 }

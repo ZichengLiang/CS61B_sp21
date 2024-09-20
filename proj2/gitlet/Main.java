@@ -73,7 +73,7 @@ public class Main {
                         break;
                     case "log":
                         if (args.length == 1) {
-                            // TODO: this should print the commmits made in the current branch
+                            repo.printLog();
                         } else {
                             System.err.println("Incorrect operands.");
                         }

@@ -35,7 +35,7 @@ public class Commit implements Serializable {
     /** metadata */
     private LocalDateTime timeStamp;
     private Tree blobTree = new Tree();
-    public String log;
+    private String log;
     private String branch;
     public File fileLocation;
     public final File logLocation = Utils.join(Repository.GITLET_DIR, "logs");
@@ -129,6 +129,10 @@ public class Commit implements Serializable {
         File dirLocation = Utils.join(Repository.GITLET_OBJ, ID.substring(0, 2));
         dirLocation.mkdirs();
         return new File(dirLocation.toString() + "/" +  ID.substring(2));
+    }
+
+    protected String getLog() {
+        return log;
     }
 
 }

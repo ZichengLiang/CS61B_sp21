@@ -24,7 +24,7 @@
   - [x] init
   - [x] add
   - [x] commit
-  - [ ] rm
+  - [x] rm
   - [ ] log
   - [x] global-log
   - [ ] find
