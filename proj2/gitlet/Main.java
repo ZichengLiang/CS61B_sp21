@@ -49,7 +49,10 @@ public class Main {
                     case "commit":
                         if (args.length == 2) {
                             if(Objects.requireNonNull(
-                                    Utils.plainFilenamesIn(Repository.STAGE_FOR_ADDITION)).isEmpty()) {
+                                    Utils.plainFilenamesIn(Repository.STAGE_FOR_ADDITION)).isEmpty()
+                                    && Objects.requireNonNull(
+                                            Utils.plainFilenamesIn(Repository.STAGE_FOR_REMOVAL)).isEmpty()
+                            ) {
                                 System.err.println("No changes added to the commit.");
                                 break;
                             }

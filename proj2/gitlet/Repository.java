@@ -170,6 +170,12 @@ public class Repository implements Serializable {
             status.append(fileName).append("\n");
         }
 
+        for (String fileName : trackedFiles.keySet()) {
+            if (!Utils.plainFilenamesIn(Repository.CWD).contains(fileName)) {
+                status.append(fileName).append("\n");
+            }
+        }
+
         status.append("\n=== Modifications Not Staged For Commit ===\n");
         /* sample:
          junk.txt (deleted)
