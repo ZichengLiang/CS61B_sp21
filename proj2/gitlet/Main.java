@@ -90,7 +90,7 @@ public class Main {
                         break;
                     case "status":
                         if (args.length == 1) {
-                            repo = Utils.readObject(Repository.repoState, repo.getClass());
+                            repo = Utils.readObject(Repository.REPO_STATE, repo.getClass());
                             repo.printStatus();
                         } else {
                             System.err.println("Incorrect operands.");
