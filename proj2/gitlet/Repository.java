@@ -106,6 +106,26 @@ public class Repository implements Serializable {
         }
     }
 
+    public boolean remove(String fileName) {
+        if (Utils.join(STAGE_FOR_ADDITION, fileName).exists()) {
+            Utils.delete(Utils.join(STAGE_FOR_ADDITION, fileName));
+            return true;
+            // Unstage the file if it is currently staged for addition.
+        } else if (trackedFiles.containsKey(fileName)) {
+            File target = Utils.join(CWD, fileName);
+            if (target.exists()) {
+                String content = Utils.readContentsAsString(target);
+                Utils.delete(target);
+
+                Utils.writeContents(Utils.join(STAGE_FOR_REMOVAL, fileName), content);
+            }
+            return true;
+        } else {
+            System.err.println("No reason to remove the file.");
+            return false;
+        }
+    }
+
     public void printGlobalLog() {
         System.out.println(Utils.readContentsAsString(Utils.join(".gitlet", "logs")));
     }

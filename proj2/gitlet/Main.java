@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /** Driver class for Gitlet, a subset of the Git version-control system.
  *  @author Zicheng Liang
@@ -49,14 +50,23 @@ public class Main {
                         break;
                     case "commit":
                         if (args.length == 2) {
+                            if(Objects.requireNonNull(
+                                    Utils.plainFilenamesIn(Repository.STAGE_FOR_ADDITION)).isEmpty()) {
+                                System.err.println("No changes added to the commit.");
+                                break;
+                            }
+                            if(args[1].isEmpty()) {
+                                System.err.println("Please enter a commit message.");
+                            }
+                            // if there's no error:
                             repo.makeCommit(args[1]);
                         } else {
-                            System.err.println("Incorrect operands.");
+                            System.err.println("Please enter a commit message.");
                         }
                         break;
                     case "rm":
                         if (args.length == 2) {
-                            // TODO: handle the `rm [filename]` command
+                            repo.remove(args[1]);
                         } else {
                             System.err.println("Incorrect operands.");
                         }

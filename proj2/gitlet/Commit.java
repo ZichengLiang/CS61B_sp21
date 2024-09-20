@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 /** Represents a gitlet commit object.
  * Combinations of:
@@ -42,11 +43,18 @@ public class Commit implements Serializable {
     public Commit(String message, LocalDateTime timeStamp, Commit parent, String branch) throws IOException {
         this.message = message;
         this.timeStamp = timeStamp;
-        ID = Utils.sha1(message, timeStamp.toString());
 
-        this.parent = parent;
+        if (parent != null) {
+            this.parent = parent;
+        } else {
+            this.parent = this;
+        }
 
         this.branch = branch;
+
+        ID = Utils.sha1(this.message, this.timeStamp.toString(),
+                        this.parent.toString(),
+                        blobTree.toString());
 
         fileLocation = makeFileLocation(ID);
 
