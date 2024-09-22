@@ -161,12 +161,12 @@ public class Repository implements Serializable {
         }
 
         status.append("\n=== Staged Files ===\n");
-        for (String fileName : Utils.plainFilenamesIn(Repository.STAGE_FOR_ADDITION)) {
+        for (String fileName : Utils.plainFilenamesIn(STAGE_FOR_ADDITION)) {
             status.append(fileName).append("\n");
         }
 
         status.append("\n=== Removed Files ===\n");
-        for (String fileName : Utils.plainFilenamesIn(Repository.STAGE_FOR_REMOVAL)) {
+        for (String fileName : Utils.plainFilenamesIn(STAGE_FOR_REMOVAL)) {
             status.append(fileName).append("\n");
         }
 
