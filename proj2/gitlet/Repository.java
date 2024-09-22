@@ -33,7 +33,8 @@ public class Repository implements Serializable {
     public static final File REPO_STATE = new File(".gitlet/repo");
 
     /** other information in the repository */
-    private Commit head;
+    protected Commit head;
+    protected boolean init = false;
     protected String currentBranch;
     protected List<String> branches = new ArrayList<>();
     protected List<Commit> commitTree = new LinkedList<>();
@@ -53,6 +54,7 @@ public class Repository implements Serializable {
             branches.add(currentBranch);
 
             commitTree.add(new Commit());
+            init = true;
         } else {
             System.err.println(
                     "A Gitlet version-control system already exists in the current directory."
