@@ -11,16 +11,19 @@ import java.io.Serializable;
  */
 
 public class Blob implements Serializable {
-    private File file;
-    protected String ID;
+    protected String id;
     protected String name;
-
+    protected String contents;
     Blob(String fileName) {
         name = fileName;
-        file = new File(Repository.STAGE_FOR_ADDITION + "/" + fileName);
-        ID = Utils.sha1(Utils.readContentsAsString(file));
+        File file = new File(Repository.STAGE_FOR_ADDITION + "/" + fileName);
+        contents = Utils.readContentsAsString(file);
+        id = Utils.sha1(contents);
     }
+
+    protected String getID() {return id;}
+    protected String getName() {return name;}
     public boolean checkDiff(Blob otherBlob) {
-        return this.ID.equals(otherBlob.ID);
+        return this.id.equals(otherBlob.id);
     }
 }

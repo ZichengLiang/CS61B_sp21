@@ -138,19 +138,16 @@ public class Main {
     }
 
     private static void check(boolean condition, String message) {
-        if (condition) {
+        if (!condition) {
             System.err.println(message);
             System.exit(1);
         }
     }
 
-    private static void checkRepo() {
-        check(!repo.init, NOT_IN_INIT_REPO);
-    }
     private static void checkArgc(int actual, int expected) {
         check(checkNumber(actual, expected), INCORRECT_OPERANDS);
     }
     private static void checkCommandEntry(int argc) {
-        check(argc <= 0, NO_COMMAND_ENTRY);
+        check(argc > 0, NO_COMMAND_ENTRY);
     }
 }

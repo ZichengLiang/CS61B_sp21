@@ -256,4 +256,19 @@ class Utils {
         return s;
     }
 
+    static Commit readCommitFrom(String hashCode) {
+        File target = join(Repository.GITLET_OBJ, hashCode);
+        return readObject(target, Commit.class);
+    }
+
+    static String readContentAsStringFromBlob(String hashCode) {
+        File target = generateObject(hashCode);
+        Blob theBlob = readObject(target, Blob.class);
+        return theBlob.contents;
+    }
+
+    static File generateObject(String hashCode) {
+        return join(Repository.GITLET_OBJ, hashCode);
+    }
+
 }

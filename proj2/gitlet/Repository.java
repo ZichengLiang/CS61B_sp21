@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static gitlet.Utils.*;
 
@@ -33,14 +35,80 @@ public class Repository implements Serializable {
     public static final File REPO_STATE = new File(".gitlet/repo");
 
     /** other information in the repository */
-    protected Commit head;
-    protected boolean init = false;
+    protected String head;
     protected String currentBranch;
     protected List<String> branches = new ArrayList<>();
     protected List<Commit> commitTree = new LinkedList<>();
-    protected Map<String, String> trackedFiles = new HashMap<>();
-    // key: name; value: hashcode
-    protected Map<String, String> untrackedFiles = new HashMap<>();
+    protected Status status = new Status();
+
+    protected class Status implements Serializable {
+        protected Set<String> stageForAddition = new HashSet<>();
+        protected Set<String> stageForRemoval = new HashSet<>();
+        protected Set<String> trackedFiles = new HashSet<>();
+        protected Set<String> untrackedFiles = new HashSet<>();
+
+        protected boolean addAllFilesIn(Commit commit) {
+            if (commit != null) {
+                trackedFiles.addAll(commit.getBlobNames());
+                return true;
+            }
+            return false;
+        }
+        protected Set<String> getUntrackedFiles() {
+            List<String> allCWDFiles = Utils.plainFilenamesIn(CWD);
+            for(String file : trackedFiles) {
+                allCWDFiles.remove(file);
+            }
+            untrackedFiles.addAll(allCWDFiles);
+            return untrackedFiles;
+        }
+
+        protected void clearStages() {
+            for (String file : stageForAddition) {
+                stageForRemoval.remove(file);
+            }
+        }
+        protected void printStatus() {
+            clearStages();
+            StringBuilder status = new StringBuilder();
+
+            status.append("=== Branches ===\n");
+            for (String branch : branches) {
+                if (branch.equals(currentBranch)) {
+                    status.append("*");
+                }
+                status.append(branch).append("\n");
+            }
+
+            status.append("\n=== Staged Files ===\n");
+            for (String fileName : Utils.plainFilenamesIn(STAGE_FOR_ADDITION)) {
+                status.append(fileName).append("\n");
+            }
+
+            status.append("\n=== Removed Files ===\n");
+            for (String fileName : Utils.plainFilenamesIn(STAGE_FOR_REMOVAL)) {
+                status.append(fileName).append("\n");
+            }
+
+            for (String fileName : trackedFiles) {
+                if (!Utils.plainFilenamesIn(Repository.CWD).contains(fileName)) {
+                    status.append(fileName).append("\n");
+                }
+            }
+
+            status.append("\n=== Modifications Not Staged For Commit ===\n");
+        /* sample:
+         junk.txt (deleted)
+         wug3.txt (modified)
+         */
+
+            status.append("\n=== Untracked Files ===\n");
+            for (String file: getUntrackedFiles()) {
+                status.append(file).append("\n");
+            }
+            System.out.println(status.toString());
+        }
+    }
 
     /* METHODS */
     public void init() throws IOException {
@@ -52,9 +120,8 @@ public class Repository implements Serializable {
 
             currentBranch = "master";
             branches.add(currentBranch);
-
             commitTree.add(new Commit());
-            init = true;
+
         } else {
             System.err.println(
                     "A Gitlet version-control system already exists in the current directory."
@@ -67,12 +134,8 @@ public class Repository implements Serializable {
 
     public void makeCommit(String message, String branch) throws IOException {
         Commit newCommit = new Commit(message, head, branch);
+        status.addAllFilesIn(newCommit);
         commitTree.add(newCommit);
-        head = newCommit;
-
-        for (Blob blob : newCommit.getBlobTree()) {
-            trackedFiles.put(blob.name, blob.ID);
-        }
     }
     public void makeCommit(String message) throws IOException {
         makeCommit(message, currentBranch);
@@ -94,15 +157,16 @@ public class Repository implements Serializable {
                     && Utils.sha1(Utils.readContentsAsString(cwdFile))
                             .equals(Utils.sha1(Utils.readContentsAsString(stgFile)))
                     // the file in stage has the same content with target file
-                    && this.trackedFiles.containsKey(fileName)
+                    && this.status.trackedFiles.contains(fileName)
                     // the target file has already been tracked
             ) {
+                status.stageForAddition.remove(stgFile);
                 Utils.delete(stgFile);
-                // remove the file from the stage for addition
                 return true;
             }
             // the normal situation: copy the file from CWD to the stage for addition
             byte[] content = Utils.readContents(file);
+            status.stageForAddition.add(fileName);
             File fileToAdd = Utils.join(STAGE_FOR_ADDITION, fileName);
             Utils.writeContents(fileToAdd, content);
             return true;
@@ -113,16 +177,19 @@ public class Repository implements Serializable {
 
     public boolean remove(String fileName) {
         if (Utils.join(STAGE_FOR_ADDITION, fileName).exists()) {
+            // Unstage the file if it is currently staged for addition.
+            status.stageForAddition.remove(fileName);
             Utils.delete(Utils.join(STAGE_FOR_ADDITION, fileName));
             return true;
-            // Unstage the file if it is currently staged for addition.
-        } else if (trackedFiles.containsKey(fileName)) {
+        } else if (status.trackedFiles.contains(fileName)) {
+            // Delete the file from the working directory
             File target = Utils.join(CWD, fileName);
             if (target.exists()) {
-                String content = Utils.readContentsAsString(target);
-                Utils.delete(target);
+                status.stageForRemoval.add(fileName);
 
+                String content = Utils.readContentsAsString(target);
                 Utils.writeContents(Utils.join(STAGE_FOR_REMOVAL, fileName), content);
+                Utils.delete(target);
             }
             return true;
         } else {
@@ -138,74 +205,16 @@ public class Repository implements Serializable {
     public void printLog() {
         System.out.println(recursiveLog(head, ""));
     }
-    private String recursiveLog(Commit current, String log) {
-        //TASK: Cannot invoke "Object.equals(Object)" because "current" is null
-        if (current.equals(commitTree.get(0))) {
-            return log + commitTree.get(0).getLog();
-        } else {
-            log = log + current.getLog();
-            return recursiveLog(current.getParent(), log);
-        }
+    private String recursiveLog(String currentID, String log) {
+        return "";
     }
     public void printGlobalLog() {
         System.out.println(Utils.readContentsAsString(Utils.join(".gitlet", "logs")));
     }
 
-    public void printStatus() {
-        StringBuilder status = new StringBuilder();
-
-        status.append("=== Branches ===\n");
-        for (String branch : branches) {
-            if (branch.equals(currentBranch)) {
-                status.append("*");
-            }
-            status.append(branch).append("\n");
-        }
-
-        status.append("\n=== Staged Files ===\n");
-        for (String fileName : Utils.plainFilenamesIn(STAGE_FOR_ADDITION)) {
-            status.append(fileName).append("\n");
-        }
-
-        status.append("\n=== Removed Files ===\n");
-        for (String fileName : Utils.plainFilenamesIn(STAGE_FOR_REMOVAL)) {
-            status.append(fileName).append("\n");
-        }
-
-        for (String fileName : trackedFiles.keySet()) {
-            if (!Utils.plainFilenamesIn(Repository.CWD).contains(fileName)) {
-                status.append(fileName).append("\n");
-            }
-        }
-
-        status.append("\n=== Modifications Not Staged For Commit ===\n");
-        /* sample:
-         junk.txt (deleted)
-         wug3.txt (modified)
-         */
-        /*
-        Set<String> tracked = trackedFiles.keySet();
-        List<String> CWDFiles = Utils.plainFilenamesIn(CWD);
-
-        for (String fileName : tracked) {
-            if (!CWDFiles.contains(fileName)) {
-                status.append(fileName).append(" (deleted)");
-            } else if (true){
-               //TASK: complete the (modified) list
-            }
-            status.append("\n");
-        }
-         */
-
-        status.append("\n=== Untracked Files ===\n");
-        /*
-        for (String fileName : CWDFiles) {
-            if (!tracked.contains(fileName)) {
-                status.append(fileName).append("\n");
-            }
-        }
-        */
-        System.out.println(status.toString());
+    protected void printStatus() {
+        status.printStatus();
     }
+
 }
 
