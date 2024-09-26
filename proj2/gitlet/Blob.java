@@ -21,8 +21,12 @@ public class Blob implements Serializable {
         id = Utils.sha1(contents);
     }
 
-    protected String getID() {return id;}
-    protected String getName() {return name;}
+    protected String getID() {
+        return id;
+    }
+    protected String getName() {
+        return name;
+    }
     public boolean checkDiff(Blob otherBlob) {
         return this.id.equals(otherBlob.id);
     }

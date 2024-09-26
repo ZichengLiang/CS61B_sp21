@@ -73,7 +73,7 @@ public class Main {
                     repo.makeCommit(args[1]);
                     break;
                 case "rm":
-                    checkArgc(argc, 1);
+                    checkArgc(argc, 2);
                     repo.remove(args[1]);
                     break;
                 case "log":

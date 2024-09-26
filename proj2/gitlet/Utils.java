@@ -257,7 +257,7 @@ class Utils {
     }
 
     static Commit readCommitFrom(String hashCode) {
-        File target = new File (Repository.GITLET_OBJ + "/" + hashCode);
+        File target = new File(Repository.GITLET_OBJ + "/" + hashCode);
         if (!target.isDirectory()) {
             return readObject(target, Commit.class);
         }

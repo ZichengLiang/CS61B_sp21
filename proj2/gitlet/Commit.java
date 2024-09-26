@@ -58,12 +58,14 @@ public class Commit implements Serializable {
     }
 
     /** the constructor for merge command, as it allows to specify two parents */
-    public static Commit newCommit (String message, String parent1, String parent2, String branch) throws IOException {
+    public static Commit newCommit (String message, String parent1, String parent2, String branch)
+            throws IOException {
         return new Commit(message, LocalDateTime.now(), parent1, parent2, branch);
     }
 
     /** the usual constructor which specifies message, single parent and the branch name */
-    public static Commit newCommit(String message, String parent1, String branch) throws IOException {
+    public static Commit newCommit(String message, String parent1, String branch)
+            throws IOException {
         return new Commit(message, LocalDateTime.now(), parent1, "0", branch);
     }
 
