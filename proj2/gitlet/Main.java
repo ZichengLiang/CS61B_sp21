@@ -45,20 +45,28 @@ public class Main {
 
             switch (firstArg) {
                 case "init":
-                    checkArgc(argc, 1);
+                    if (checkArgc(argc, 1)) {
+                        break;
+                    }
                     repo = new Repository();
                     break;
                 case "add":
                     /** in gitlet, only one file may be added at a time */
-                    checkArgc(argc, 2);
+                    if (checkArgc(argc, 2)) {
+                        break;
+                    }
                     String fileName = args[1];
 
-                    check(checkFileIn(fileName, Repository.CWD), FILE_NOT_EXIST);
+                    if (check(checkFileIn(fileName, Repository.CWD), FILE_NOT_EXIST)) {
+                        break;
+                    }
                     File target = Utils.join(Repository.CWD, fileName);
                     repo.add(target, fileName);
                     break;
                 case "commit":
-                    checkArgc(argc, 2);
+                    if (checkArgc(argc, 2)) {
+                        break;
+                    }
                     if (Objects.requireNonNull(
                             Utils.plainFilenamesIn(Repository.STAGE_FOR_ADDITION)).isEmpty()
                             && Objects.requireNonNull(
@@ -75,27 +83,37 @@ public class Main {
                     repo.makeCommit(args[1]);
                     break;
                 case "rm":
-                    checkArgc(argc, 2);
+                    if (checkArgc(argc, 2)) {
+                        break;
+                    }
                     repo.remove(args[1]);
                     break;
                 case "log":
-                    checkArgc(argc, 1);
+                    if (checkArgc(argc, 1)) {
+                        break;
+                    }
                     repo.printLog();
                     break;
                 case "global-log":
-                    checkArgc(argc, 1);
+                    if (checkArgc(argc, 1)) {
+                        break;
+                    }
                     repo.printGlobalLog();
                     break;
                 case "find":
                     // TODO: handle the `find [commit message]` command
                     break;
                 case "status":
-                    checkArgc(argc, 1);
+                    if (checkArgc(argc, 1)) {
+                        break;
+                    }
                     repo = Utils.readObject(Repository.REPO_STATE, repo.getClass());
                     repo.printStatus();
                     break;
                 case "branch":
-                    checkArgc(argc, 2);
+                    if (checkArgc(argc, 2)) {
+                        break;
+                    }
                     repo.setNewBranch(args[1]);
                     break;
                 case "checkout":
@@ -139,17 +157,18 @@ public class Main {
         return Repository.REPO_STATE.exists();
     }
 
-    private static void check(boolean condition, String message) {
+    private static boolean check(boolean condition, String message) {
         if (!condition) {
             System.err.println(message);
-            System.exit(1);
+            return true;
         }
+        return false;
     }
 
-    private static void checkArgc(int actual, int expected) {
-        check(checkNumber(actual, expected), INCORRECT_OPERANDS);
+    private static boolean checkArgc(int actual, int expected) {
+        return check(checkNumber(actual, expected), INCORRECT_OPERANDS);
     }
-    private static void checkCommandEntry(int argc) {
-        check(argc > 0, NO_COMMAND_ENTRY);
+    private static boolean checkCommandEntry(int argc) {
+        return check(argc > 0, NO_COMMAND_ENTRY);
     }
 }

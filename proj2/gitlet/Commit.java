@@ -4,11 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Formatter;
 import java.util.Set;
 
 /** Represents a gitlet commit object.
@@ -120,16 +118,18 @@ public class Commit implements Serializable {
 
     /** generate the log for the Commit */
     private String generateLog(String id, LocalDateTime time, String commitMessage) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss yyyy xxxx");
+        // Convert LocalDateTime to Date
+        Date date = Date.from(time.atZone(ZoneId.systemDefault()).toInstant());
 
-        ZoneOffset utcOffset = ZoneOffset.UTC;
-        OffsetDateTime utcTime = time.atOffset(utcOffset);
+        // Create a formatter for formatting the date
+        Formatter formatter = new Formatter();
 
-        ZoneId zone = ZoneId.of("Europe/Dublin");
-        ZonedDateTime zonedTime = utcTime.atZoneSameInstant(zone);
-        return ("\n===\ncommit " + id + "\n"
-                + "Date: " + zonedTime.format(formatter)
-                + "\n" + commitMessage + "\n");
+        // Set the desired format for the output
+        formatter.format("Date: %ta %tb %td %tT %tY %tz", date, date, date, date, date, date);
+
+        return ("===\ncommit " + id + "\n"
+                + formatter
+                + "\n" + commitMessage + "\n\n");
     }
 
 
