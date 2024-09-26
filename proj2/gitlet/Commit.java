@@ -29,10 +29,10 @@ public class Commit implements Serializable {
      */
 
     /** message & ID */
-    private String message;
-    private String ID;
-    private String parent1ID;
-    private String parent2ID;
+    protected String message;
+    protected String ID;
+    protected String parent1ID;
+    protected String parent2ID;
 
     /** metadata */
     private LocalDateTime timeStamp;
@@ -54,38 +54,36 @@ public class Commit implements Serializable {
 
         this.branch = branch;
 
-        ID = Utils.sha1(this.message,
-                        this.timeStamp.toString(),
-                        parent1ID, parent2ID,
-                        blobTree.toString());
-        Utils.generateObject(this.ID);
+        this.ID = Utils.sha1(this.message, this.timeStamp.toString(),
+                        this.parent1ID, this.parent2ID, this.branch);
 
         log = generateLog(ID, this.timeStamp, this.message);
-        this.writeGlobalLog();
     }
 
     /** the constructor for merge command, as it allows to specify two parents */
-    public Commit (String message, String parent1, String parent2, String branch) throws IOException {
-        new Commit(message, LocalDateTime.now(), parent1, parent2, branch);
+    public static Commit newCommit (String message, String parent1, String parent2, String branch) throws IOException {
+        return new Commit(message, LocalDateTime.now(), parent1, parent2, branch);
     }
 
     /** the usual constructor which specifies message, single parent and the branch name */
-    public Commit(String message, String parent1, String branch) throws IOException {
-        new Commit(message, LocalDateTime.now(), parent1, "", branch);
+    public static Commit newCommit(String message, String parent1, String branch) throws IOException {
+        return new Commit(message, LocalDateTime.now(), parent1, "0", branch);
     }
 
     /** the constructor specialised for init() as it can specify the timestamp */
-    public Commit(String message, LocalDateTime timeStamp) throws IOException {
-        new Commit(message, timeStamp, "", "", "master");
-    }
-    /** the constructor only for the initial commit */
-    public Commit() throws IOException {
-        new Commit("initial commit",
-                LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0, 0));
+    public static Commit newCommit(String message, LocalDateTime timeStamp) throws IOException {
+        return new Commit(message, timeStamp, "0", "0", "master");
     }
 
     String getID() {
         return ID;
+    }
+
+    String getBlobID(String blobName) {
+        if (blobTree.getBlobNames().contains(blobName)) {
+            return blobTree.getBlobID(blobName);
+        }
+        return " ";
     }
 
     String getParent1ID() {

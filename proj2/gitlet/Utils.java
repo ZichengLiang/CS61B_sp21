@@ -257,14 +257,21 @@ class Utils {
     }
 
     static Commit readCommitFrom(String hashCode) {
-        File target = join(Repository.GITLET_OBJ, hashCode);
-        return readObject(target, Commit.class);
+        File target = new File (Repository.GITLET_OBJ + "/" + hashCode);
+        if (!target.isDirectory()) {
+            return readObject(target, Commit.class);
+        }
+        return null;
     }
 
     static String readContentAsStringFromBlob(String hashCode) {
         File target = generateObject(hashCode);
         Blob theBlob = readObject(target, Blob.class);
         return theBlob.contents;
+    }
+
+    static String readContentHashFromBlob(String hash) {
+        return Utils.sha1(readContentAsStringFromBlob(hash));
     }
 
     static File generateObject(String hashCode) {

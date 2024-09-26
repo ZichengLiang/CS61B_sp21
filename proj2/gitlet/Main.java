@@ -25,10 +25,10 @@ public class Main {
     private static final String NOT_IN_REPOSITORY = "Not in an initialized Gitlet directory.";
     private static final String NO_CHANGE_TO_COMMIT = "No changes added to the commit.";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         int argc = args.length;
         if (!repoInitialised()) {
-            repo = new Repository();
+            repo = null;
         } else {
             repo = Utils.readObject(Repository.REPO_STATE, Repository.class);
         }
@@ -36,10 +36,15 @@ public class Main {
         try {
             checkCommandEntry(argc);
             String firstArg = args[0];
+            if(!firstArg.equals("init") && !repoInitialised()) {
+                System.err.println("Not in an initialized Gitlet directory.");
+                System.exit(1);
+            }
+
             switch (firstArg) {
                 case "init":
                     checkArgc(argc, 1);
-                    repo.init();
+                    repo = new Repository();
                     break;
                 case "add":
                     /** in gitlet, only one file may be added at a time */
@@ -89,7 +94,7 @@ public class Main {
                     break;
                 case "branch":
                     checkArgc(argc, 2);
-                    repo.setCurrentBranch(args[1]);
+                    repo.setNewBranch(args[1]);
                 case "checkout":
                     if (args.length == 1) {
                         // checkout [branch name]
@@ -122,6 +127,8 @@ public class Main {
                     break;
             }
         } catch (IOException e) { e.printStackTrace(); }
+
+        if (!repoInitialised()) Repository.REPO_STATE.createNewFile();
         Utils.writeObject(Repository.REPO_STATE, repo);
     }
 

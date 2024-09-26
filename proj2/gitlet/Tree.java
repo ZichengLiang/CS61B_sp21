@@ -22,11 +22,14 @@ public class Tree implements Serializable {
     // <fileName, hashCode>
 
     Tree() throws IOException {
-        for (String fileName : Utils.plainFilenamesIn(Repository.STAGE_FOR_ADDITION)) {
-            Blob currentBlob = new Blob(fileName);
-            saveBlob(Utils.generateObject(currentBlob.getID()), currentBlob);
-            blobs.put(currentBlob.getName(), currentBlob.getID());
-            Utils.delete(Repository.STAGE_FOR_ADDITION + "/" + fileName);
+        List<String> stageForAddition = Utils.plainFilenamesIn(Repository.STAGE_FOR_ADDITION);
+        if (stageForAddition != null) {
+            for (String fileName : stageForAddition) {
+                Blob currentBlob = new Blob(fileName);
+                saveBlob(Utils.generateObject(currentBlob.getID()), currentBlob);
+                blobs.put(currentBlob.getName(), currentBlob.getID());
+                Utils.delete(Repository.STAGE_FOR_ADDITION + "/" + fileName);
+            }
         }
     }
 
