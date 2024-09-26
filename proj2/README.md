@@ -25,11 +25,11 @@
   - [x] add
   - [x] commit
   - [x] rm
-  - [ ] log
+  - [x] log
   - [x] global-log
-  - [ ] find
+  - [x] find
   - [x] status
-  - [ ] checkout
+  - [x] checkout
   - [x] branch
   - [ ] rm-branch
   - [ ] reset
