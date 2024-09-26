@@ -210,7 +210,7 @@ public class Repository implements Serializable {
             Utils.delete(Utils.join(STAGE_FOR_ADDITION, fileName));
             return true;
         } else if (status.trackedFiles.contains(fileName)) {
-            // Delete the file from the working directory
+            // Stage the file for removal and delete the file from the working directory
             File target = Utils.join(CWD, fileName);
             if (target.exists()) {
                 status.stageForRemoval.add(fileName);
@@ -218,9 +218,11 @@ public class Repository implements Serializable {
                 String content = Utils.readContentsAsString(target);
                 Utils.writeContents(Utils.join(STAGE_FOR_REMOVAL, fileName), content);
                 Utils.delete(target);
+            } else if (!Utils.plainFilenamesIn(CWD).contains(fileName)) {
+                status.stageForRemoval.add(fileName);
             }
             return true;
-        } else {
+        }  else {
             System.err.println("No reason to remove the file.");
             return false;
         }
@@ -294,4 +296,3 @@ public class Repository implements Serializable {
         status.printStatus();
     }
 }
-
