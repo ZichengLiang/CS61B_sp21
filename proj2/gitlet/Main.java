@@ -25,7 +25,7 @@ public class Main {
     private static final String NOT_IN_REPOSITORY = "Not in an initialized Gitlet directory.";
     private static final String NO_CHANGE_TO_COMMIT = "No changes added to the commit.";
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         int argc = args.length;
         if (!repoInitialised()) {
             repo = null;
@@ -125,9 +125,8 @@ public class Main {
                     System.err.println(NO_COMMAND_NAME);
                     break;
             }
+            if (!repoInitialised()) Repository.REPO_STATE.createNewFile();
         } catch (IOException e) { e.printStackTrace(); }
-
-        if (!repoInitialised()) Repository.REPO_STATE.createNewFile();
         Utils.writeObject(Repository.REPO_STATE, repo);
     }
 

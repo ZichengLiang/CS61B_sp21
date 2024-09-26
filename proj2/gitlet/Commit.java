@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /** Represents a gitlet commit object.
