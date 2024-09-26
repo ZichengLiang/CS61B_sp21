@@ -75,39 +75,44 @@ public class Repository implements Serializable {
                 stageForRemoval.remove(file);
             }
         }
+        protected void clearAfterCommit() {
+            stageForAddition.clear();
+            stageForRemoval.clear();
+        }
 
         protected void printStatus() {
             clearStages();
-            StringBuilder status = new StringBuilder();
+            StringBuilder statusReport= new StringBuilder();
 
-            status.append("=== Branches ===\n");
+            statusReport.append("=== Branches ===\n");
             for (String branch : branches) {
                 if (branch.equals(currentBranch)) {
-                    status.append("*");
+                    statusReport.append("*");
                 }
-                status.append(branch).append("\n");
+                statusReport.append(branch).append("\n");
             }
 
-            status.append("\n=== Staged Files ===\n");
+            statusReport.append("\n=== Staged Files ===\n");
             for (String fileName : stageForAddition) {
-                status.append(fileName).append("\n");
+                statusReport.append(fileName).append("\n");
             }
 
-            status.append("\n=== Removed Files ===\n");
+            statusReport.append("\n=== Removed Files ===\n");
             for (String fileName : stageForRemoval) {
-                status.append(fileName).append("\n");
+                statusReport.append(fileName).append("\n");
             }
-            status.append("\n=== Modifications Not Staged For Commit ===\n");
+            statusReport.append("\n=== Modifications Not Staged For Commit ===\n");
         /* sample:
          junk.txt (deleted)
          wug3.txt (modified)
          */
 
-            status.append("\n=== Untracked Files ===\n");
+            statusReport.append("\n=== Untracked Files ===\n");
             for (String file : getUntrackedFiles()) {
-                status.append(file).append("\n");
+                statusReport.append(file).append("\n");
             }
-            System.out.println(status.toString());
+
+            System.out.println(statusReport);
         }
     }
 
@@ -138,6 +143,7 @@ public class Repository implements Serializable {
     public void makeCommit(String message, String branch) throws IOException {
         Commit newCommit = Commit.newCommit(message, head, branch);
         status.addAllFilesIn(newCommit);
+        status.clearAfterCommit();
         commitTree.put(newCommit.getID(), newCommit);
         head = newCommit.getID();
         Utils.writeObject(Utils.generateObject(newCommit.ID), newCommit);
