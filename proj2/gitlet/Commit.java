@@ -4,6 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 /** Represents a gitlet commit object.
@@ -115,8 +120,15 @@ public class Commit implements Serializable {
 
     /** generate the log for the Commit */
     private String generateLog(String id, LocalDateTime time, String commitMessage) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss yyyy xxxx");
+
+        ZoneOffset utcOffset = ZoneOffset.UTC;
+        OffsetDateTime utcTime = time.atOffset(utcOffset);
+
+        ZoneId zone = ZoneId.of("Europe/Dublin");
+        ZonedDateTime zonedTime = utcTime.atZoneSameInstant(zone);
         return ("\n===\ncommit " + id + "\n"
-                + "Date: " + time.toString()
+                + "Date: " + zonedTime.format(formatter)
                 + "\n" + commitMessage + "\n");
     }
 
