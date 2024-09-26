@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-// TODO: the autograder does not recognise my error message and log format
-// TODO: check the project spec!
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
  *
@@ -135,7 +133,6 @@ public class Main {
                         System.err.println(INCORRECT_OPERANDS);
                     }
                     break;
-                // TODO: ... more commands from `checkout`
                 default:
                     System.err.println(NO_COMMAND_NAME);
                     break;
