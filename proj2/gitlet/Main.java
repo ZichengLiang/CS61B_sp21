@@ -99,7 +99,10 @@ public class Main {
                     repo.printGlobalLog();
                     break;
                 case "find":
-                    // TODO: handle the `find [commit message]` command
+                    if (checkArgc(argc, 2)) {
+                        break;
+                    }
+                    repo.find(args[1]);
                     break;
                 case "status":
                     if (checkArgc(argc, 1)) {

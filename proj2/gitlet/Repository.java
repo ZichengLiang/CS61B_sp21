@@ -42,6 +42,7 @@ public class Repository implements Serializable {
     protected String currentBranch;
     protected List<String> branches = new ArrayList<>();
     protected Map<String, Commit> commitTree = new TreeMap<>();
+    // <hash, Commit>
     protected Status status = new Status();
 
     protected class Status implements Serializable {
@@ -252,21 +253,41 @@ public class Repository implements Serializable {
         return checkout(head, fileName);
     }
 
+    private String getLog(String cmtID) {
+        return commitTree.get(cmtID).getLog();
+    }
+
     public void printLog() {
         System.out.println(recursiveLog(head, ""));
     }
 
     private String recursiveLog(String currentID, String log) {
         if (commitTree.get(currentID).message.equals("initial commit")) {
-            return log + commitTree.get(currentID).getLog();
+            return log + getLog(currentID);
         }
-        log = log + commitTree.get(currentID).getLog();
+        log = log + getLog(currentID);
         String currentParent1ID = commitTree.get(currentID).getParent1ID();
         return recursiveLog(currentParent1ID, log);
     }
 
     public void printGlobalLog() {
-        System.out.println(Utils.readContentsAsString(Utils.join(".gitlet", "logs")));
+       for (String hash : commitTree.keySet()) {
+           System.out.println(getLog(hash));
+       }
+    }
+
+    public void find(String inputMessage) {
+        boolean found = false;
+        for (String id : commitTree.keySet()) {
+            Commit current = Utils.readCommitFrom(id);
+            if (current.message.equals(inputMessage)) {
+                System.out.println(id);
+                found = true;
+            }
+        }
+        if (!found) {
+            System.out.println("Found no commit with that message.");
+        }
     }
 
     protected void printStatus() {
