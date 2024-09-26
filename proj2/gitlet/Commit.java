@@ -110,9 +110,13 @@ public class Commit implements Serializable {
         Utils.appendFile(logLocation, log);
     }
 
+    public LocalDateTime getTimeStamp() {
+        return timeStamp;
+    }
+
     /** generate the log for the Commit */
     private String generateLog(String id, LocalDateTime time, String commitMessage) {
-        return ("===\ncommit " + id + "\n"
+        return ("\n===\ncommit " + id + "\n"
                 + "Date: " + time.toString()
                 + "\n" + commitMessage + "\n");
     }

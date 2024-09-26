@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import static gitlet.Utils.*;
 
@@ -42,7 +43,7 @@ public class Repository implements Serializable {
     protected String head;
     protected String currentBranch;
     protected List<String> branches = new ArrayList<>();
-    protected List<Commit> commitTree = new LinkedList<>();
+    protected Map<String, Commit> commitTree = new TreeMap<>();
     protected Status status = new Status();
 
     protected class Status implements Serializable {
@@ -127,7 +128,7 @@ public class Repository implements Serializable {
         Commit initCommit = new Commit("initial commit",
                 LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0, 0), "0", "0", "master");
         Utils.writeObject(Utils.generateObject(initCommit.ID), initCommit);
-        commitTree.add(initCommit);
+        commitTree.put(initCommit.getID(), initCommit);
         head = initCommit.getID();
     }
 
@@ -146,7 +147,7 @@ public class Repository implements Serializable {
     public void makeCommit(String message, String branch) throws IOException {
         Commit newCommit = Commit.newCommit(message, head, branch);
         status.addAllFilesIn(newCommit);
-        commitTree.add(newCommit);
+        commitTree.put(newCommit.getID(), newCommit);
         head = newCommit.getID();
         Utils.writeObject(Utils.generateObject(newCommit.ID), newCommit);
     }
@@ -227,8 +228,31 @@ public class Repository implements Serializable {
         }
     }
 
-    public boolean checkout() {
-        return false;
+    public boolean checkout(String commitID, String fileName) throws IOException {
+        File cwdFile = new File(CWD + "/" + fileName);
+        if (!commitTree.containsKey(commitID)) {
+            System.err.println("No commit with that id exists.");
+            return false;
+        }
+        Commit theCommit = Utils.readCommitFrom(commitID);
+        if (!theCommit.getBlobNames().contains(fileName)) {
+            System.err.println("File does not exist in that commit.");
+            return false;
+        }
+        String blobID = theCommit.getBlobID(fileName);
+        String content = Utils.readContentAsStringFromBlob(blobID);
+
+        if (!cwdFile.exists()) {
+            cwdFile.createNewFile();
+        }
+
+        Utils.writeContents(cwdFile, content);
+
+        return true;
+    }
+
+    public boolean checkout(String fileName) throws IOException {
+        return checkout(head, fileName);
     }
 
     public void printLog() {
@@ -236,7 +260,12 @@ public class Repository implements Serializable {
     }
 
     private String recursiveLog(String currentID, String log) {
-        return "";
+        if (commitTree.get(currentID).message.equals("initial commit")) {
+            return log + commitTree.get(currentID).getLog();
+        }
+        log = log + commitTree.get(currentID).getLog();
+        String currentParent1ID = commitTree.get(currentID).getParent1ID();
+        return recursiveLog(currentParent1ID, log);
     }
 
     public void printGlobalLog() {

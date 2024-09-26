@@ -96,7 +96,7 @@ public class Main {
                     checkArgc(argc, 2);
                     repo.setNewBranch(args[1]);
                 case "checkout":
-                    if (args.length == 1) {
+                    if (args.length == 2) {
                         // checkout [branch name]
                         // Takes all files in the commit at the head of the given branch, and puts them in the working directory, overwriting the versions of the files that are already there if they exist.
                         // Also, at the end of this command, the given branch will now be considered the current branch (HEAD).
@@ -109,14 +109,13 @@ public class Main {
                             System.err.println("No need to checkout the current branch.");
                             System.exit(1);
                         }
-                    } else if (args.length == 2 && args[1].equals("--")) {
-                        // checkout -- [file name]
-                        // Takes the version of the file as it exists in the head commit and puts it in the working directory, overwriting the version of the file that’s already there if there is one.
+                    } else if (args.length == 3 && args[1].equals("--")) {
+                        //java gitlet.Main checkout -- [file name]
+                        repo.checkout(args[2]);
                         // The new version of the file is NOT staged.
-                    } else if (args.length == 3 && args[2].equals("--")) {
+                    } else if (args.length == 4 && args[2].equals("--")) {
                         // checkout [commit id] -- [file name]
-                        // Takes the version of the file as it exists in the commit with the given id, and puts it in the working directory, overwriting the version of the file that’s already there if there is one.
-                        // The new version of the file is NOT staged.
+                        repo.checkout(args[1], args[3]);
                     } else {
                         System.err.println(INCORRECT_OPERANDS);
                     }
