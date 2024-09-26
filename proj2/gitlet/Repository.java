@@ -89,21 +89,14 @@ public class Repository implements Serializable {
             }
 
             status.append("\n=== Staged Files ===\n");
-            for (String fileName : Utils.plainFilenamesIn(STAGE_FOR_ADDITION)) {
+            for (String fileName : stageForAddition) {
                 status.append(fileName).append("\n");
             }
 
             status.append("\n=== Removed Files ===\n");
-            for (String fileName : Utils.plainFilenamesIn(STAGE_FOR_REMOVAL)) {
+            for (String fileName : stageForRemoval) {
                 status.append(fileName).append("\n");
             }
-
-            for (String fileName : trackedFiles) {
-                if (!Utils.plainFilenamesIn(Repository.CWD).contains(fileName)) {
-                    status.append(fileName).append("\n");
-                }
-            }
-
             status.append("\n=== Modifications Not Staged For Commit ===\n");
         /* sample:
          junk.txt (deleted)
