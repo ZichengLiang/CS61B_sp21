@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
+// TODO: the autograder does not recognise my error message and log format
+// TODO: check the project spec!
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
  *
@@ -38,7 +40,7 @@ public class Main {
             String firstArg = args[0];
             if(!firstArg.equals("init") && !repoInitialised()) {
                 System.err.println("Not in an initialized Gitlet directory.");
-                System.exit(1);
+                throw new GitletException();
             }
 
             switch (firstArg) {
@@ -63,11 +65,11 @@ public class Main {
                             Utils.plainFilenamesIn(Repository.STAGE_FOR_REMOVAL)).isEmpty()
                     ) {
                         System.err.println("No changes added to the commit.");
-                        System.exit(1);
+                        break;
                     }
                     if (args[1].isEmpty()) {
                         System.err.println("Please enter a commit message.");
-                        System.exit(1);
+                        break;
                     }
                     // if there's no error:
                     repo.makeCommit(args[1]);
@@ -95,32 +97,27 @@ public class Main {
                 case "branch":
                     checkArgc(argc, 2);
                     repo.setNewBranch(args[1]);
+                    break;
                 case "checkout":
                     if (args.length == 2) {
-                        // checkout [branch name]
-                        // Takes all files in the commit at the head of the given branch, and puts them in the working directory, overwriting the versions of the files that are already there if they exist.
-                        // Also, at the end of this command, the given branch will now be considered the current branch (HEAD).
-                        // Any files that are tracked in the current branch but are not present in the checked-out branch are deleted.
-                        // The staging area is cleared, unless the checked-out branch is the current branch (see Failure cases below).
                         if (!repo.branches.contains(args[1])) {
                             System.err.println("No such branch exists.");
-                            System.exit(1);
+                            break;
                         } else if (repo.currentBranch.equals(args[1])) {
                             System.err.println("No need to checkout the current branch.");
-                            System.exit(1);
+                            break;
                         }
                     } else if (args.length == 3 && args[1].equals("--")) {
-                        //java gitlet.Main checkout -- [file name]
                         repo.checkout(args[2]);
-                        // The new version of the file is NOT staged.
+                        break;
                     } else if (args.length == 4 && args[2].equals("--")) {
-                        // checkout [commit id] -- [file name]
                         repo.checkout(args[1], args[3]);
+                        break;
                     } else {
                         System.err.println(INCORRECT_OPERANDS);
                     }
-                    // TODO: ... more commands from `checkout`
                     break;
+                // TODO: ... more commands from `checkout`
                 default:
                     System.err.println(NO_COMMAND_NAME);
                     break;

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -82,7 +83,7 @@ public class Repository implements Serializable {
 
         protected void printStatus() {
             clearStages();
-            StringBuilder statusReport= new StringBuilder();
+            StringBuilder statusReport = new StringBuilder();
 
             statusReport.append("=== Branches ===\n");
             for (String branch : branches) {
