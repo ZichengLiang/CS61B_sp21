@@ -7,7 +7,7 @@
   - Each project has a specific theme:
     - [x] Project 0 (2048): Introduction to Java
     - [x] Project 1 (Deques & Guitar Hero): Basic Design, Testing, and Code Review
-    - [ ] Project 2 (GitLet): Design, Large Scale Implementation
+    - [x] Project 2 (GitLet): Design, Large Scale Implementation
     - [ ] Project 3 (Build Your Own World): Large Scale Design
   ----
    - Labs cover debugging, testing and git skills, as well as the implementation of some data structures:
